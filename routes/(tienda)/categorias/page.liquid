@@ -1,0 +1,26 @@
+{% assign title = 'Colecciones | ' | append: store.name %}
+{% metadata title: title %}
+{% head %}{% render 'structured-page', title: 'Categorías', kind: 'CollectionPage' %}{% endhead %}
+<section class="page page-width">
+    {% render 'breadcrumbs', current_label: 'Categorías' %}
+    <header class="page-header">
+      <h1>Categorías</h1>
+    </header>
+
+      {% if data.collections.nodes.size > 0 %}
+        <ul class="collection-grid">
+          {% for collection in data.collections.nodes %}
+            {% unless collection.handle == 'todas' %}
+              <li>{% render 'collection-card', collection: collection %}</li>
+            {% endunless %}
+          {% endfor %}
+        </ul>
+        {% render 'pagination', info: data.collections.pageInfo, query: request.query %}
+      {% else %}
+        <div class="empty-state">
+          <p>No hay categorías disponibles.</p>
+          <a class="button" href="{{ data.catalog.url | escape }}">Ver productos</a>
+        </div>
+      {% endif %}
+
+</section>

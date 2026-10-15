@@ -1,47 +1,27 @@
 {% assign product = data.product %}
-{% assign title = product.seo.title | default: product.title %}
-{% assign description = product.seo.description | default: product.description %}
-{% metadata title: title, description: description, image: product.coverImage %}
-<article class="section">
-  {% assign collection = product.collections.first %}
-  {% if collection.url %}<a href="{{ collection.url }}">{{ collection.name | escape }}</a>{% endif %}
-  <h1>{{ product.title | escape }}</h1>
-  {% for image in product.images %}
-    <img src="{{ image | image_url: width: 800 | escape }}" alt="{{ image.alt | escape }}" width="800" {% unless forloop.first %}loading="lazy"{% endunless %}>
-  {% endfor %}
-  <p>
-    {{ product.price | money: product.currency }}
-    {% if product.compareAtPrice > product.price %}<s>{{ product.compareAtPrice | money: product.currency }}</s>{% endif %}
-  </p>
-  {% for option in product.options %}
-    <p>{{ option.name | escape }}: {{ option.values | map: 'value' | join: ', ' | escape }}</p>
-  {% endfor %}
-  {% unless product.available %}<p>Sin stock</p>{% endunless %}
-  {% assign first_variant = product.variants | first %}
-  {% if product.variants.size > 1 %}
-    <label>Variante:
-      <select data-variant-select>
-        {% for variant in product.variants %}
-          <option value="{{ variant.id }}" data-price="{{ variant.price }}"{% unless variant.available %} disabled{% endunless %}>{{ variant.selectedOptions | map: 'value' | join: ' / ' | escape }} — {{ variant.price | money: product.currency }}</option>
-        {% endfor %}
-      </select>
-    </label>
-  {% endif %}
-  <button type="button" data-add-to-cart data-variant-id="{{ first_variant.id }}" data-price="{{ first_variant.price }}" data-title="{{ product.title | escape }}" data-currency="{{ product.currency }}"{% unless product.available and product.variants.size > 0 %} disabled{% endunless %}>Agregar al carrito</button>
-  <button type="button" data-wishlist-toggle data-product-id="{{ product.id }}">Guardar en favoritos</button>
-  <div>{{ product.description | escape | newline_to_br }}</div>
-  {% if product.specifications.size > 0 %}
-    <dl>{% for spec in product.specifications %}<dt>{{ spec.name | escape }}</dt><dd>{{ spec.value | escape }}</dd>{% endfor %}</dl>
-  {% endif %}
-  {% if product.reviewsCount > 0 %}<p>{{ product.rating | round: 1 }} / 5 ({{ product.reviewsCount }} reseñas)</p>{% endif %}
-</article>
-{% if collection.products.nodes.size > 1 %}
-  <section class="section">
-    <h2>También te puede gustar</h2>
-    <div class="product-grid">
-      {% for related in collection.products.nodes %}
-        {% unless related.url == request.path %}{% render 'product-card', product: related %}{% endunless %}
-      {% endfor %}
-    </div>
-  </section>
-{% endif %}
+{% assign title = product.seo.title | default: product.title | append: ' | ' | append: store.name %}
+{% assign description = product.seo.description | default: product.description | default: store.description | strip_html | strip | truncate: 160 %}
+{% metadata title: title, description: description, image: product.coverImage.url %}
+{% head %}
+  {{ 'media-carousel.css' | asset_url | stylesheet_tag }}
+  {{ 'product.css' | asset_url | stylesheet_tag }}
+  {{ 'product.js' | asset_url | script_tag }}
+  {% render 'seo-extra', image: product.coverImage %}
+  {% render 'structured-page', title: title, description: description %}
+  {% render 'structured-product', product: product, description: description %}
+{% endhead %}
+{% assign related_products = '' | split: ',' %}
+{% for collection in product.collections %}
+  {% assign related_products = related_products | concat: collection.products.nodes %}
+  {% for child in collection.children %}{% assign related_products = related_products | concat: child.products.nodes %}{% endfor %}
+{% endfor %}
+{% assign candidates = related_products | concat: data.fallback_products.nodes %}
+{% assign related_products = '' | split: ',' %}
+{% assign candidate_ids = candidates | map: 'id' | uniq %}
+{% for candidate_id in candidate_ids %}
+  {% assign candidate = candidates | where: 'id', candidate_id | slice: 0, 1 %}
+  {% assign related_products = related_products | concat: candidate %}
+{% endfor %}
+{% assign view = 'product-default' %}
+{% if product.template != blank %}{% assign view = 'product-' | append: product.template %}{% endif %}
+{% render view, product: product, related_products: related_products, catalog: data.catalog %}

@@ -1,0 +1,12 @@
+<article class="page page-width prose-page">
+  {% render 'breadcrumbs', current_label: page.title %}
+  {% if page.coverImage %}
+    <span class="media media--wide">
+      <img class="media__img" src="{{ page.coverImage.url | escape }}" alt="{{ page.coverImage.alt | default: page.title | escape }}">
+    </span>
+  {% endif %}
+  {% if page.title %}<h1>{{ page.title | escape }}</h1>{% endif %}
+  {% if page.content and page.content.size > 0 %}
+    <div class="prose">{% render 'content-blocks', blocks: page.content %}</div>
+  {% endif %}
+</article>

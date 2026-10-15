@@ -1,0 +1,28 @@
+{%- comment -%}
+  Lucide icon: search
+  Usage:
+    {% render 'icon-search' %}
+    {% render 'icon-search', size: 32 %}
+    {% render 'icon-search', class: 'custom-class' %}
+    {% render 'icon-search', stroke_width: 1.5 %}
+{%- endcomment -%}
+{%- liquid
+  assign size = size | default: 24
+  assign stroke_width = stroke_width | default: 1.5
+-%}
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="{{ size }}"
+  height="{{ size }}"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="{{ stroke_width }}"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class="icon lucide lucide-search{% if class %} {{ class }}{% endif %}"
+  aria-hidden="true"
+>
+<path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>

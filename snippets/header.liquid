@@ -1,0 +1,89 @@
+<a class="skip-link" href="#main-content">Saltar al contenido</a>
+
+<header class="site-header" data-site-header>
+  <div class="site-header__inner page-width">
+    <a class="site-logo" href="/" aria-label="Inicio de {{ shop.name | escape }}">{{ shop.name | escape }}</a>
+
+    <nav class="site-header__nav" aria-label="Navegación principal">
+      <ul class="site-header__links">
+        {% if menu and menu.items.size > 0 %}
+          {% for link in menu.items %}
+            <li>
+              <a href="{{ link.url | escape }}"{% if link.openInNewTab %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ link.label | escape }}</a>
+            </li>
+          {% endfor %}
+        {% else %}
+          <li><a href="{{ catalog.url | escape }}">Productos</a></li>
+          <li><a href="/categorias">Categorías</a></li>
+          <li><a href="/blog">Blog</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <button type="button" class="icon-button" data-action="open-search" aria-label="Buscar">
+        {% render 'icon-search', size: 24, stroke_width: 1.6 %}
+      </button>
+      <button type="button" class="icon-button site-header__account" data-action="open-account" aria-label="Mi cuenta">
+        {% render 'icon-user', size: 24, stroke_width: 1.6 %}
+      </button>
+      <button type="button" class="icon-button site-header__wishlist" data-action="open-wishlist" aria-label="Favoritos">
+        {% render 'icon-heart', size: 24, stroke_width: 1.6 %}
+        <span class="cart-badge" data-wishlist-quantity hidden>0</span>
+      </button>
+      <button type="button" class="icon-button icon-button--cart" data-action="open-cart" aria-label="Carrito">
+        {% render 'icon-shopping-bag', size: 24, stroke_width: 1.6 %}
+        <span class="cart-badge" data-cart-quantity hidden>0</span>
+      </button>
+      <button
+        type="button"
+        class="icon-button site-header__menu-button"
+        data-action="toggle-menu"
+        aria-expanded="false"
+        aria-controls="site-drawer-header"
+        aria-label="Abrir menú"
+      >
+        <span data-icon-open>{% render 'icon-text-align-end', size: 26, stroke_width: 1.6 %}</span>
+        <span data-icon-close hidden>{% render 'icon-x', size: 26, stroke_width: 1.6 %}</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="nav-drawer" data-nav-drawer aria-hidden="true">
+  <div class="nav-drawer__overlay" data-drawer-overlay></div>
+  <aside class="nav-drawer__panel" id="site-drawer-header" data-mobile-nav aria-label="Menú">
+    <div class="nav-drawer__top">
+      <a class="site-logo" href="/">{{ shop.name | escape }}</a>
+      <button type="button" class="icon-button" data-action="toggle-menu" aria-label="Cerrar menú">
+        {% render 'icon-x', size: 24, stroke_width: 1.6 %}
+      </button>
+    </div>
+    <nav>
+      <ul class="nav-drawer__links">
+        {% if menu and menu.items.size > 0 %}
+          {% for link in menu.items %}
+            <li>
+              <a href="{{ link.url | escape }}"{% if link.openInNewTab %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ link.label | escape }}</a>
+            </li>
+          {% endfor %}
+        {% else %}
+          <li><a href="{{ catalog.url | escape }}">Productos</a></li>
+          <li><a href="/categorias">Categorías</a></li>
+          <li><a href="/blog">Blog</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+    <div class="nav-drawer__tools">
+      <button type="button" class="nav-drawer__tool" data-action="open-account">
+        {% render 'icon-user', size: 20, stroke_width: 1.6 %}
+        Mi cuenta
+      </button>
+      <button type="button" class="nav-drawer__tool" data-action="open-wishlist">
+        {% render 'icon-heart', size: 20, stroke_width: 1.6 %}
+        Favoritos
+        <span class="cart-badge" data-wishlist-quantity hidden>0</span>
+      </button>
+    </div>
+  </aside>
+</div>

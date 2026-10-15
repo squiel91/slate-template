@@ -1,0 +1,6 @@
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":{{ store.name | json | replace: '<', '\u003c' }},"url":{{ store.url | json | replace: '<', '\u003c' }},"description":{{ store.description | default: '' | strip_html | strip | truncate: 160 | json | replace: '<', '\u003c' }}{% if store.emailAddress != blank %},"email":{{ store.emailAddress | json | replace: '<', '\u003c' }}{% endif %}{% if store.whatsappNumber != blank %},"telephone":{{ store.whatsappNumber | json | replace: '<', '\u003c' }}{% endif %}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":{{ store.name | json | replace: '<', '\u003c' }},"url":{{ store.url | json | replace: '<', '\u003c' }},"potentialAction":{"@type":"SearchAction","target":{{ store.url | append: '/busqueda?q={search_term_string}' | json | replace: '<', '\u003c' }},"query-input":"required name=search_term_string"}}
+</script>

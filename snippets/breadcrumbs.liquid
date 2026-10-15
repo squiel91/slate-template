@@ -1,0 +1,7 @@
+<nav class="breadcrumbs" aria-label="Migas de pan">
+  <ol>
+    <li><a href="/">Inicio</a></li>
+    {% if parent_url != blank and parent_label != blank %}<li><a href="{{ parent_url | escape }}">{{ parent_label | escape }}</a></li>{% endif %}
+    {% if current_label != blank %}<li aria-current="page">{{ current_label | escape }}</li>{% endif %}
+  </ol>
+</nav>

@@ -1,23 +1,12 @@
-{% assign collection = data.collection %}
-{% assign title = collection.seo.title | default: collection.name %}
-{% assign description = collection.seo.description | default: collection.description %}
-{% metadata title: title, description: description %}
-<section class="section">
-  <h1>{{ collection.name | escape }}</h1>
-  <p>{{ collection.description | escape }}</p>
-  {% assign current = request.query.sort | default: collection.defaultSortBy %}
-  <form method="get" class="collection-sort-form">
-    <label>Ordenar por
-      <select name="sort" onchange="this.form.submit()">
-        {% for option in collection.sortOptions %}
-          <option value="{{ option.value }}"{% if option.value == current %} selected{% endif %}>{{ option.label | escape }}</option>
-        {% endfor %}
-      </select>
-    </label>
-  </form>
-  <p>{{ collection.products.totalCount }} productos</p>
-  <div class="product-grid">
-    {% for product in collection.products.nodes %}{% render 'product-card', product: product %}{% endfor %}
-  </div>
-  {% render 'pagination', info: collection.products.pageInfo, query: request.query %}
-</section>
+{% assign resource = data.collection %}
+{% assign title = resource.seo.title | default: resource.name | append: ' | ' | append: store.name %}
+{% assign description = resource.seo.description | default: resource.description | default: store.description | strip_html | strip | truncate: 160 %}
+{% metadata title: title, description: description, image: resource.coverImage.url %}
+{% head %}
+  {% render 'seo-extra', image: resource.coverImage, article: nil %}
+  {% render 'structured-page', title: title, description: description, kind: 'CollectionPage' %}
+
+{% endhead %}
+{% assign view = 'collection-default' %}
+{% if resource.template != blank %}{% assign view = 'collection-' | append: resource.template %}{% endif %}
+{% render view, collection: resource, catalog: data.catalog %}

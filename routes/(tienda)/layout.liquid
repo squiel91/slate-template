@@ -1,24 +1,4 @@
-<header class="site-header">
-  <div class="page-width header-inner">
-    <a class="brand" href="/">{{ store.name | escape }}</a>
-    <nav aria-label="Navegación principal">
-      <a href="/">Inicio</a>
-      {% if data.catalog.url %}<a href="{{ data.catalog.url }}">Productos</a>{% endif %}
-      <a href="/blog">Blog</a>
-      {% for item in data.main_menu.items %}
-        <a href="{{ item.url | escape }}"{% if item.openInNewTab %} target="_blank" rel="noopener"{% endif %}>{{ item.label | escape }}</a>
-      {% endfor %}
-    </nav>
-    <form class="header-search" action="/busqueda" method="get" role="search">
-      <input type="search" name="q" placeholder="Buscar productos" aria-label="Buscar productos">
-    </form>
-    <div class="header-actions">
-      <button type="button" data-search-open>Buscar</button>
-      <button type="button" data-account-open>Cuenta</button>
-      <button type="button" data-wishlist-open>Favoritos</button>
-      <button type="button" data-cart-open>Carrito (<span data-cart-quantity>0</span>)</button>
-    </div>
-  </div>
-</header>
-<main class="page page-width">{{ content }}</main>
-<footer class="page-width section"><p>{{ store.name | escape }}</p></footer>
+{% render 'header', shop: data.shop, menu: data.main_menu, catalog: data.catalog %}
+<main id="main-content">{{ content }}</main>
+{% render 'footer', shop: data.shop, menu: data.footer_menu %}
+{% render 'whatsapp-float', shop: data.shop %}

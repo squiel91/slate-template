@@ -1,17 +1,40 @@
-# Lienzo v2 — Stage 2
+# Lienzo v2
 
-Local Tiendu Theme Engine v2 proof of concept, using Lienzo's CSS (MIT).
+Lienzo's editorial storefront design on Tiendu Theme Engine 2. Spanish storefront routes cover home, products, collections (`/categorias`, including `/categorias/todas`), pages, blog, search and 404. Cart, checkout, account and wishlist use Tiendu's SDK and platform overlays.
 
-- `/`: best sellers; `?first=2` changes the declared list size.
-- `/productos/<handle>`: a listed product with images, options and related products.
-- `/categorias/<handle>`: a public collection with sort (`?sort=price-asc`) and pages (`?page=2`); `todas` lists all products.
-- `/busqueda?q=<texto>`: product search.
-- `/paginas/<handle>`: a CMS page.
-- `/blog` and `/blog/<handle>`: blog posts.
-- Unknown paths or handles return the root 404 page.
+- `routes/`: Liquid pages, layouts and GraphQL data. `(tienda)` owns shared chrome.
+- `snippets/`: reusable markup, home features and resource templates.
+- `queries/`: named data queries, including the 404's shared navigation.
+- `assets/`: CSS tokens, browser behavior and released SDK.
+- `config/theme.json`: engine/name; `config/routes.json`: public resource patterns.
+- `DESIGN.md`: visual design; `AGENTS.md`: coding and resource conventions.
 
-`routes/layout.liquid` owns the document. `(tienda)/layout.liquid` owns the header/footer. Queries are declared next to each view. `config/routes.json` maps resources to URLs. Snippets take arguments and assets are ordinary files.
+There is no build or package install. Storefront copy is edited in Liquid and design tokens in assets/theme.css. The store needs menus `principal` and `footer`; the platform's local `seed-theme-menus.ts` helper can create them without altering existing menus.
 
-This is a local Git repository. Push it only to a local store through `http://127.0.0.1:4500/<store-handle>.git`, with a local store API key via a credential helper. `live` updates that local store immediately. Other branches create previews. No external remote or publication is configured.
+Clone your store repository with a store API key using a credential helper (never commit credentials):
 
-See the platform's `specs/theme-engine-v2-stage-2-report.md` for the verified local URLs and commands.
+```bash
+git clone https://git.tiendu.uy/STORE_HANDLE.git
+cd STORE_HANDLE
+git switch -c design-update
+# Edit theme files, then:
+git add .
+git commit -m "Update storefront"
+git push -u origin design-update
+```
+
+The Git server prints the branch's preview URL. Open it to check the pages and interactions; preview code is isolated, but catalog data and checkout are real. Fix reported validation errors and warnings before publishing.
+
+To publish an approved branch, fetch first, merge the reviewed changes into `live`, then push:
+
+```bash
+git fetch origin
+git switch live
+git merge --ff-only origin/live
+git merge design-update
+git push origin live
+```
+
+Delete a finished preview with `git push origin --delete design-update`. Never force-push live. For local development replace the clone URL with `http://127.0.0.1:4500/STORE_HANDLE.git`; this Stage 5 checkout is authorized for local pushes only.
+
+Platform documentation and SDK releases: https://docs.tiendu.uy. Keep assets/tiendu-sdk.js byte-identical to its released version (currently 1.0.0).

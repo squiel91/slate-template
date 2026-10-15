@@ -1,0 +1,11 @@
+<form class="newsletter-form" data-newsletter-form novalidate>
+  <label class="visually-hidden" for="newsletter-email-{{ form_id }}">Email</label>
+  <input id="newsletter-email-{{ form_id }}" class="field" type="email" name="email" autocomplete="email" required placeholder="Tu email" data-newsletter-email>
+  <button class="button" type="submit">Suscribirme</button>
+  <p role="alert" data-newsletter-error hidden></p>
+</form>
+<dialog data-newsletter-dialog>
+  <h3>Revisá tu email</h3>
+  <p>Te enviamos un mensaje. Tocá el botón de ese email para confirmar tu suscripción.</p>
+  <form method="dialog"><button class="button" type="submit">Cerrar</button></form>
+</dialog>

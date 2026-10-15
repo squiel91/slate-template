@@ -1,14 +1,38 @@
-{% metadata title: 'Blog' %}
-<section class="section">
-  <h1>Blog</h1>
-  {% for post in data.posts.nodes %}
-    <article>
-      <h2>{% if post.url %}<a href="{{ post.url }}">{{ post.title | escape }}</a>{% else %}{{ post.title | escape }}{% endif %}</h2>
-      {% if post.publishedAt %}<p><time datetime="{{ post.publishedAt }}">{{ post.publishedAt | date: "%d/%m/%Y" }}</time></p>{% endif %}
-      <p>{{ post.excerpt | escape }}</p>
-    </article>
-  {% else %}
-    <p>Todavía no hay publicaciones.</p>
-  {% endfor %}
-  {% render 'pagination', info: data.posts.pageInfo, query: request.query %}
+{% assign title = 'Blog | ' | append: store.name %}
+{% metadata title: title %}
+{% head %}{% render 'structured-page', title: 'Blog' %}{% endhead %}
+<section class="page page-width">
+    {% render 'breadcrumbs', current_label: 'Blog' %}
+    <header class="page-header">
+      <h1>Blog</h1>
+    </header>
+
+      {% if data.posts.totalCount > 0 %}
+        <div class="article-grid">
+          {% for post in data.posts.nodes %}
+            {% assign post_url = post.url %}
+            <article class="article-card">
+              <a href="{{ post_url | escape }}">
+                <span class="media media--wide">
+                  {% if post.coverImage %}
+                    <img class="media__img" src="{{ post.coverImage.url | escape }}" alt="{{ post.coverImage.alt | default: post.title | escape }}" loading="lazy">
+                  {% endif %}
+                </span>
+                <h2 class="article-card__title">{{ post.title | escape }}</h2>
+              </a>
+              {% if post.excerpt != blank %}<p>{{ post.excerpt | escape }}</p>{% endif %}
+              <div class="article-card__meta">
+                {% render 'article-byline', author: store.name, datetime: post.publishedAt %}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+        {% render 'pagination', info: data.posts.pageInfo, query: request.query %}
+      {% else %}
+        <div class="empty-state">
+          <p>No hay artículos publicados.</p>
+          <a class="button" href="/">Volver al inicio</a>
+        </div>
+      {% endif %}
+
 </section>

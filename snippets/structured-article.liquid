@@ -1,0 +1,4 @@
+{% assign article_url = store.url | append: request.path %}
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":{{ article.title | json | replace: '<', '\u003c' }},"description":{{ description | json | replace: '<', '\u003c' }},"url":{{ article_url | json | replace: '<', '\u003c' }}{% if article.coverImage %},"image":[{{ article.coverImage.url | json | replace: '<', '\u003c' }}]{% endif %}{% if article.publishedAt %},"datePublished":{{ article.publishedAt | json | replace: '<', '\u003c' }}{% endif %},"author":{"@type":"Organization","name":{{ store.name | json | replace: '<', '\u003c' }}},"publisher":{"@type":"Organization","name":{{ store.name | json | replace: '<', '\u003c' }}}}
+</script>

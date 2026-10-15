@@ -1,0 +1,25 @@
+{%- comment -%}
+  Lucide icon: user
+  Usage: {% render 'icon-user', size: 20, stroke_width: 1.6 %}
+{%- endcomment -%}
+{%- liquid
+  assign size = size | default: 24
+  assign stroke_width = stroke_width | default: 1.5
+-%}
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="{{ size }}"
+  height="{{ size }}"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="{{ stroke_width }}"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class="icon icon-user{% if class %} {{ class }}{% endif %}"
+  aria-hidden="true"
+  focusable="false"
+>
+  <circle cx="12" cy="8" r="4" />
+  <path d="M4 20c0-3.3 3.6-6 8-6s8 2.7 8 6" />
+</svg>

@@ -1,0 +1,31 @@
+{%- assign author_name = author | strip -%}
+{%- if author_name == blank -%}
+  {%- assign author_name = store.name -%}
+{%- endif -%}
+{%- assign name_parts = author_name | split: ' ' -%}
+{%- assign first_initial = '' -%}
+{%- assign last_initial = '' -%}
+{%- for part in name_parts -%}
+  {%- if part != blank -%}
+    {%- if first_initial == blank -%}
+      {%- assign first_initial = part | slice: 0, 1 | upcase -%}
+    {%- else -%}
+      {%- assign last_initial = part | slice: 0, 1 | upcase -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- if last_initial != blank -%}
+  {%- assign initials = first_initial | append: last_initial -%}
+{%- else -%}
+  {%- assign initials = author_name | slice: 0, 2 | upcase -%}
+{%- endif -%}
+
+<div class="article-byline">
+  <span class="article-byline__avatar" aria-hidden="true">{{ initials | escape }}</span>
+  <span class="article-byline__copy">
+    <strong>{{ author_name | escape }}</strong>
+    {% if datetime %}
+      <time datetime="{{ datetime | escape }}">{% render 'format-blog-date', datetime: datetime %}</time>
+    {% endif %}
+  </span>
+</div>

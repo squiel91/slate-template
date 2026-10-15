@@ -1,0 +1,27 @@
+{% for item in blocks %}
+  {% case item.type %}
+    {% when 'heading' %}
+      {% if item.level == 1 %}
+        <h2>{{ item.text | escape }}</h2>
+      {% elsif item.level == 2 %}
+        <h3>{{ item.text | escape }}</h3>
+      {% else %}
+        <h4>{{ item.text | escape }}</h4>
+      {% endif %}
+    {% when 'paragraph' %}
+      <p>{{ item.text | escape }}</p>
+    {% when 'image' %}
+      {% if item.image and item.image.url %}
+        <figure class="media media--wide">
+          <img
+            class="media__img"
+            src="{{ item.image.url | escape }}"
+            alt="{{ item.image.alt | escape }}"
+            loading="lazy"
+          >
+        </figure>
+      {% endif %}
+    {% when 'html' %}
+      {{ item.code }}
+  {% endcase %}
+{% endfor %}

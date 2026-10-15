@@ -1,0 +1,40 @@
+{% assign selected_collection = collection %}
+
+<section class="section" data-animate-in aria-labelledby="featured-products-heading-featured-products">
+  <div class="page-width">
+    <div class="section-header">
+      <div>
+        {% if 'Catálogo' != blank %}
+          <span class="section-kicker">Catálogo</span>
+        {% endif %}
+        <h2 class="section-title" id="featured-products-heading-featured-products">Productos</h2>
+      </div>
+      {% if selected_collection %}
+        <a class="text-link" href="{{ selected_collection.url | escape }}">
+          Ver todos
+          {% render 'icon-arrow-right', size: 16, stroke_width: 1.7 %}
+        </a>
+      {% endif %}
+    </div>
+
+    {% if selected_collection %}
+
+        {% if selected_collection.products.totalCount > 0 %}
+          <ul class="product-grid">
+            {% for product in selected_collection.products.nodes %}
+              <li>{% render 'product-card', product: product %}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="empty-state">
+            <p>No hay productos disponibles.</p>
+          </div>
+        {% endif %}
+
+    {% else %}
+      <div class="empty-state">
+        <p>Elegí una colección para mostrar productos.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>

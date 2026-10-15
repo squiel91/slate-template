@@ -1,0 +1,107 @@
+<section class="section testimonials-section" data-animate-in aria-labelledby="testimonials-heading-testimonials">
+  <div class="page-width">
+    <div class="section-header">
+      <div>
+        {% if 'Clientes' != blank %}
+          <span class="section-kicker">Clientes</span>
+        {% endif %}
+        <h2 class="section-title" id="testimonials-heading-testimonials">Testimonios</h2>
+      </div>
+    </div>
+
+    <ul class="testimonials">
+      <li class="testimonial testimonial--1">
+        {% assign quote_1_image = '' | default: '' %}
+        {% if quote_1_image == blank %}
+          {% assign quote_1_image = 'testimonial-lucia.png' | asset_url %}
+        {% endif %}
+        {% if quote_1_image != blank %}
+          <figure class="testimonial__media">
+            <img
+              src="{{ quote_1_image | image_url: width: 640 | escape }}"
+              alt="Lucía Benítez"
+              width="240"
+              height="300"
+              loading="lazy"
+            >
+          </figure>
+        {% endif %}
+        <div class="testimonial__body">
+          <span class="testimonial__mark" aria-hidden="true">“</span>
+          {% render 'rating-stars', rating: '5', star_size: 13 %}
+          <blockquote>
+            <p>Los platos tienen un peso y un acabado que se siente en cada comida. Quedaron hermosos en la mesa de todos los días.</p>
+          </blockquote>
+          <footer class="testimonial__author">
+            <strong>Lucía Benítez</strong>
+            {% if 'Montevideo' != blank %}
+              <span>Montevideo</span>
+            {% endif %}
+          </footer>
+        </div>
+      </li>
+
+      <li class="testimonial testimonial--2">
+        {% assign quote_2_image = '' | default: '' %}
+        {% if quote_2_image == blank %}
+          {% assign quote_2_image = 'testimonial-martin.png' | asset_url %}
+        {% endif %}
+        {% if quote_2_image != blank %}
+          <figure class="testimonial__media">
+            <img
+              src="{{ quote_2_image | image_url: width: 640 | escape }}"
+              alt="Martín Álvarez"
+              width="240"
+              height="300"
+              loading="lazy"
+            >
+          </figure>
+        {% endif %}
+        <div class="testimonial__body">
+          <span class="testimonial__mark" aria-hidden="true">“</span>
+          {% render 'rating-stars', rating: '5', star_size: 13 %}
+          <blockquote>
+            <p>Compré la jarra de cerámica y se volvió la pieza que más uso. Simple, honesta y con un carácter que no cansa.</p>
+          </blockquote>
+          <footer class="testimonial__author">
+            <strong>Martín Álvarez</strong>
+            {% if 'Pocitos' != blank %}
+              <span>Pocitos</span>
+            {% endif %}
+          </footer>
+        </div>
+      </li>
+
+      <li class="testimonial testimonial--3">
+        {% assign quote_3_image = '' | default: '' %}
+        {% if quote_3_image == blank %}
+          {% assign quote_3_image = 'testimonial-sofia.png' | asset_url %}
+        {% endif %}
+        {% if quote_3_image != blank %}
+          <figure class="testimonial__media">
+            <img
+              src="{{ quote_3_image | image_url: width: 640 | escape }}"
+              alt="Sofía Pereira"
+              width="240"
+              height="300"
+              loading="lazy"
+            >
+          </figure>
+        {% endif %}
+        <div class="testimonial__body">
+          <span class="testimonial__mark" aria-hidden="true">“</span>
+          {% render 'rating-stars', rating: '5', star_size: 13 %}
+          <blockquote>
+            <p>El candelabro llegó impecable. Se nota el oficio: calidez, forma y una presencia que cambia el rincón.</p>
+          </blockquote>
+          <footer class="testimonial__author">
+            <strong>Sofía Pereira</strong>
+            {% if 'Cordón' != blank %}
+              <span>Cordón</span>
+            {% endif %}
+          </footer>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>

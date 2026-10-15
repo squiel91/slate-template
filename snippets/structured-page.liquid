@@ -1,0 +1,6 @@
+{% assign page_title = title | default: store.name %}
+{% assign page_description = description | default: store.description | strip_html | strip | truncate: 160 %}
+{% assign page_url = store.url | append: request.path %}
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":{{ kind | default: 'WebPage' | json | replace: '<', '\u003c' }},"name":{{ page_title | json | replace: '<', '\u003c' }},"description":{{ page_description | json | replace: '<', '\u003c' }},"url":{{ page_url | json | replace: '<', '\u003c' }},"inLanguage":{{ 'es-' | append: store.countryCode | json | replace: '<', '\u003c' }},"isPartOf":{"@type":"WebSite","name":{{ store.name | json | replace: '<', '\u003c' }},"url":{{ store.url | json | replace: '<', '\u003c' }}}}
+</script>

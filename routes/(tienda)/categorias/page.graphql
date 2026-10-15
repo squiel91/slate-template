@@ -1,0 +1,1 @@
+query ($page: Int = 1) { collections(first: 12, page: $page) { nodes { name handle url productCount coverImage { url alt } } pageInfo { currentPage totalPages hasNextPage hasPreviousPage } totalCount } }

@@ -1,16 +1,25 @@
 query ($handle: String!) {
   product(handle: $handle) @required {
-    id title description price compareAtPrice currency available template
-    coverImage { url alt }
-    images(first: 8) { url alt }
-    options { name values { value color } }
-    variants { id price available selectedOptions { name value } }
+    id handle url title price priceMin priceMax compareAtPrice currency available
+coverImage { url alt } rating reviewsCount
+variants { id sku price stock available }
+    description template videoUrl
+    images(first: 100) { url alt }
+    options { name displayType values { value color note image { url alt } } }
+    variants { compareAtPrice image { url alt } selectedOptions { name value } }
     specifications { name value }
-    rating reviewsCount
-    collections(first: 1) {
-      name url
-      products(first: 4, sortBy: "best-selling") { nodes { url title price currency coverImage { url alt } } }
+    reviews(first: 6) { nodes { rating authorName verifiedPurchase content images { url alt } } }
+    collections(first: 10) {
+      products(first: 8) { nodes { id handle url title price priceMin priceMax compareAtPrice currency available
+coverImage { url alt } rating reviewsCount
+variants { id sku price stock available } } }
+      children(first: 50) { products(first: 8) { nodes { id handle url title price priceMin priceMax compareAtPrice currency available
+coverImage { url alt } rating reviewsCount
+variants { id sku price stock available } } } }
     }
     seo { title description }
   }
+  fallback_products: products(first: 8) { nodes { id handle url title price priceMin priceMax compareAtPrice currency available
+coverImage { url alt } rating reviewsCount
+variants { id sku price stock available } } }
 }

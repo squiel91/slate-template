@@ -1,0 +1,47 @@
+{% assign picked_collections = collections %}
+
+<section class="section section--compact" data-animate-in aria-labelledby="featured-collections-heading-featured-collections">
+  <div class="page-width">
+    <div class="section-header">
+      <div>
+        {% if 'Explorar' != blank %}
+          <span class="section-kicker">Explorar</span>
+        {% endif %}
+        <h2 class="section-title" id="featured-collections-heading-featured-collections">Categorías</h2>
+      </div>
+      <a class="text-link" href="/categorias">
+        Ver todas
+        {% render 'icon-arrow-right', size: 16, stroke_width: 1.7 %}
+      </a>
+    </div>
+
+    {% if picked_collections.nodes.size > 0 %}
+      <ul class="collection-grid">
+        {% for featured_collection in picked_collections.nodes limit: 6 %}
+          <li>{% render 'collection-card', collection: featured_collection %}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      {% assign shown = 0 %}
+      <ul class="collection-grid">
+        {% for featured_collection in collections.nodes %}
+          {% unless featured_collection.handle == 'todas' %}
+            {% if shown < 6 %}
+              <li>{% render 'collection-card', collection: featured_collection %}</li>
+              {% assign shown = shown | plus: 1 %}
+            {% endif %}
+          {% endunless %}
+        {% endfor %}
+        {% if shown == 0 and catalog %}
+          <li>{% render 'collection-card', collection: catalog %}</li>
+          {% assign shown = shown | plus: 1 %}
+        {% endif %}
+      </ul>
+      {% if shown == 0 %}
+        <div class="empty-state">
+          <p>Elegí categorías para mostrarlas.</p>
+        </div>
+      {% endif %}
+    {% endif %}
+  </div>
+</section>

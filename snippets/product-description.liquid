@@ -1,0 +1,31 @@
+{% assign visible_specifications = 0 %}
+{% for specification in product.specifications %}
+  {% assign first_character = specification.name | slice: 0, 1 %}
+  {% if specification.name != blank and specification.value != blank and first_character != '_' %}{% assign visible_specifications = visible_specifications | plus: 1 %}{% endif %}
+{% endfor %}
+
+{% if product.description != blank or visible_specifications > 0 %}
+  <section class="product-description page-width" data-animate-in aria-labelledby="description-heading-product-description">
+    <div class="section-heading">
+      <h2 id="description-heading-product-description">Descripción</h2>
+    </div>
+    {% if product.description != blank %}
+      <div class="prose prose--breaks">{{ product.description }}</div>
+    {% endif %}
+    {% if visible_specifications > 0 %}
+      <div class="prose">
+        <h3>Especificaciones</h3>
+        <table>
+          <tbody>
+            {% for specification in product.specifications %}
+              {% assign first_character = specification.name | slice: 0, 1 %}
+              {% if specification.name != blank and specification.value != blank and first_character != '_' %}
+                <tr><th scope="row">{{ specification.name | escape }}</th><td>{{ specification.value | escape }}</td></tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+  </section>
+{% endif %}

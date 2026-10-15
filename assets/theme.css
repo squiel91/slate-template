@@ -1,6 +1,6 @@
 /* =============================================================================
    Theme tokens
-   Change these — or the matching settings in layout/theme.liquid — to retarget
+   Change these tokens in :root to retarget
    the storefront for a different brand. Components consume variables only.
    ============================================================================= */
 
@@ -2056,20 +2056,4 @@ dialog .button {
   .media__img {
     transition: none;
   }
-}
-
-/* Stage 1 catalog shell. */
-.product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: var(--space-5); }
-.product-card img { width: 100%; aspect-ratio: 1; object-fit: cover; }
-.header-inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); padding-block: var(--space-4); }
-.header-inner nav { display: flex; flex-wrap: wrap; gap: var(--space-4); }
-
-/* Stage 2: header search */
-.header-search input {
-  width: 100%;
-  max-width: 16rem;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--color-line, #ddd);
-  border-radius: var(--radius, 6px);
-  font: inherit;
 }

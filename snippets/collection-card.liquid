@@ -1,0 +1,13 @@
+<a class="collection-card" href="{{ collection.url | escape }}">
+  <span class="media media--collection">
+    {% if collection.coverImage %}
+      <img class="media__img" src="{{ collection.coverImage.url | escape }}" alt="{{ collection.coverImage.alt | default: collection.name | escape }}" loading="lazy">
+    {% endif %}
+  </span>
+  <span class="collection-card__label">
+    <span class="collection-card__name">{{ collection.name | escape }}</span>
+    {% if collection.productCount != blank %}
+      <span class="collection-card__count">{{ collection.productCount }} {% if collection.productCount == 1 %}producto{% else %}productos{% endif %}</span>
+    {% endif %}
+  </span>
+</a>

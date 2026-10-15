@@ -1,0 +1,21 @@
+{%- liquid
+  assign size = size | default: 20
+  assign stroke_width = stroke_width | default: 1.5
+-%}
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="{{ size }}"
+  height="{{ size }}"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="{{ stroke_width }}"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class="icon icon-youtube{% if class %} {{ class }}{% endif %}"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d="M22.5 7.2a3 3 0 0 0-2.1-2.1C18.6 4.7 12 4.7 12 4.7s-6.6 0-8.4.4A3 3 0 0 0 1.5 7.2 31 31 0 0 0 1.1 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.8.4 8.4.4 8.4.4s6.6 0 8.4-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22.9 12a31 31 0 0 0-.4-4.8Z" />
+  <path d="m10 15.5 5.2-3.5L10 8.5v7Z" />
+</svg>

@@ -3,13 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  {{ 'tiendu-sdk.js' | asset_url | script_tag }}
+  {% head %}
+    <meta name="application-name" content="{{ store.name | escape }}">
+    <meta property="og:locale" content="es_{{ store.countryCode | escape }}">
+    {% render 'structured-site' %}
+  {% endhead %}
+  <script type="importmap">{"imports":{"media-carousel": "{{ 'media-carousel.js' | asset_url }}"}}</script>
   {{ tiendu_head }}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap">
   {{ 'theme.css' | asset_url | stylesheet_tag }}
+  {{ 'layout.js' | asset_url | script_tag }}
 </head>
-<body>
+<body data-store-currency="{{ store.currency | escape }}">
   {{ content }}
   {{ tiendu_body_end }}
-  {{ 'tiendu-sdk.js' | asset_url | script_tag }}
-  {{ 'theme.js' | asset_url | script_tag }}
 </body>
 </html>

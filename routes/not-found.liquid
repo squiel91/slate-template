@@ -1,6 +1,8 @@
-{% metadata title: 'Página no encontrada', description: 'La página que buscás no está disponible.' %}
-<main class="page page-width section">
-  <h1>Página no encontrada</h1>
-  <p>La página que buscás no está disponible.</p>
-  <a href="/">Volver al inicio</a>
-</main>
+{% assign title = 'Página no encontrada | ' | append: store.name %}
+{% metadata title: title, description: 'La página que buscás no existe o fue movida.', robots: 'noindex,follow' %}
+{% head %}{% render 'structured-page', title: 'Página no encontrada' %}{% endhead %}
+{% query 'chrome', as: 'chrome' %}
+{% render 'header', shop: chrome.shop, menu: chrome.main_menu, catalog: chrome.catalog %}
+<main id="main-content">{% render 'not-found' %}</main>
+{% render 'footer', shop: chrome.shop, menu: chrome.footer_menu %}
+{% render 'whatsapp-float', shop: chrome.shop %}
