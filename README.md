@@ -1,6 +1,8 @@
 # Slate
 
-Tiendu's default storefront theme on Theme Engine 2, with an editorial design. Spanish storefront routes cover home, products, collections (`/categorias`, including `/categorias/todas`), pages, blog, search and 404. Cart, checkout, account and wishlist use Tiendu's SDK and platform overlays.
+Slate is a storefront theme designed to be used in [Tiendu](https://tiendu.uy). It is part of the new Tiendu theme framework and is rendered with Tiendu's Engine 2: pages are folders under `routes/`, data comes from GraphQL files next to them, and markup lives in Liquid views and snippets. There are no sections, schemas or theme settings to configure; you change the theme by editing its files, with Manu (Tiendu's assistant) or through Git. New Tiendu stores start with Slate.
+
+The design is editorial: cream paper, serif display type and images without card chrome. Colors, fonts, spacing and radii are CSS custom properties in `assets/theme.css`. Spanish storefront routes cover home, products, collections (`/categorias`, including `/categorias/todas`), pages, blog, search and 404. Cart, checkout, account and wishlist use Tiendu's SDK and platform overlays.
 
 - `routes/`: Liquid pages, layouts and GraphQL data. `(tienda)` owns shared chrome.
 - `snippets/`: reusable markup, home features and resource templates.
