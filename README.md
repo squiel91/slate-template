@@ -1,6 +1,6 @@
-# Lienzo v2
+# Slate
 
-Lienzo's editorial storefront design on Tiendu Theme Engine 2. Spanish storefront routes cover home, products, collections (`/categorias`, including `/categorias/todas`), pages, blog, search and 404. Cart, checkout, account and wishlist use Tiendu's SDK and platform overlays.
+Tiendu's default storefront theme on Theme Engine 2, with an editorial design. Spanish storefront routes cover home, products, collections (`/categorias`, including `/categorias/todas`), pages, blog, search and 404. Cart, checkout, account and wishlist use Tiendu's SDK and platform overlays.
 
 - `routes/`: Liquid pages, layouts and GraphQL data. `(tienda)` owns shared chrome.
 - `snippets/`: reusable markup, home features and resource templates.
@@ -9,7 +9,7 @@ Lienzo's editorial storefront design on Tiendu Theme Engine 2. Spanish storefron
 - `config/theme.json`: engine/name; `config/routes.json`: public resource patterns.
 - `DESIGN.md`: visual design; `AGENTS.md`: coding and resource conventions.
 
-There is no build or package install. Storefront copy is edited in Liquid and design tokens in assets/theme.css. The store needs menus `principal` and `footer`; the platform's local `seed-theme-menus.ts` helper can create them without altering existing menus.
+There is no build or package install. Storefront copy is edited in Liquid and design tokens in assets/theme.css. The header and footer read the menus `principal` and `footer`; new Tiendu stores get both.
 
 Clone your store repository with a store API key using a credential helper (never commit credentials):
 
@@ -35,6 +35,6 @@ git merge design-update
 git push origin live
 ```
 
-Delete a finished preview with `git push origin --delete design-update`. Never force-push live. For local development replace the clone URL with `http://127.0.0.1:4500/STORE_HANDLE.git`; this Stage 5 checkout is authorized for local pushes only.
+Delete a finished preview with `git push origin --delete design-update`. Never force-push live.
 
 Platform documentation and SDK releases: https://docs.tiendu.uy. Keep assets/tiendu-sdk.js byte-identical to its released version (currently 1.0.0).

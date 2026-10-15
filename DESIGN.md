@@ -1,6 +1,6 @@
-# Lienzo design system
+# Slate design system
 
-Read this file before adding or restyling a section. Tokens live in `assets/theme.css` (`:root`). Prefer those variables over new hex values.
+Read this file before adding or restyling a page or snippet. Tokens live in `assets/theme.css` (`:root`). Prefer those variables over new hex values.
 
 The storefront is an editorial ceramics shop: cream paper, serif display type, quiet sans body, and images that sit on the page without card chrome. New work should feel like a magazine for objects, not a SaaS landing page.
 
