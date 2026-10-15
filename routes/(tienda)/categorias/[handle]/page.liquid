@@ -1,0 +1,11 @@
+{% if data.collection == nil %}{% not_found %}{% endif %}
+{% assign title = data.collection.seo.title | default: data.collection.name %}
+{% assign description = data.collection.seo.description | default: data.collection.description %}
+{% metadata title: title, description: description %}
+<section class="section">
+  <h1>{{ data.collection.name | escape }}</h1>
+  <p>{{ data.collection.description | escape }}</p>
+  <div class="product-grid">
+    {% for product in data.collection.products.nodes %}{% render 'product-card', product: product %}{% endfor %}
+  </div>
+</section>

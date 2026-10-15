@@ -1,0 +1,7 @@
+query ($handle: String!) {
+  product(handle: $handle) {
+    title description price currency available
+    coverImage { url alt }
+    seo { title description }
+  }
+}

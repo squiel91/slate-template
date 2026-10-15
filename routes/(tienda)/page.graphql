@@ -1,0 +1,3 @@
+query ($first: Int = 24) {
+  products(first: $first) { nodes { handle title price currency coverImage { url alt } } }
+}

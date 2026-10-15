@@ -1,0 +1,12 @@
+{% if data.product == nil %}{% not_found %}{% endif %}
+{% assign title = data.product.seo.title | default: data.product.title %}
+{% assign description = data.product.seo.description | default: data.product.description %}
+{% metadata title: title, description: description %}
+<article class="section">
+  <a href="/categorias/todas">Todos los productos</a>
+  <h1>{{ data.product.title | escape }}</h1>
+  {% if data.product.coverImage %}<img src="{{ data.product.coverImage.url | image_url: width: 1000 | escape }}" alt="{{ data.product.coverImage.alt | escape }}" width="800">{% endif %}
+  <p>{{ data.product.price | money: data.product.currency }}</p>
+  <p>{{ data.product.description | escape | newline_to_br }}</p>
+  {% unless data.product.available %}<p>Sin stock</p>{% endunless %}
+</article>

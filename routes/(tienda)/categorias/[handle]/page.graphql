@@ -1,0 +1,6 @@
+query ($handle: String!, $first: Int = 24) {
+  collection(handle: $handle) {
+    name description seo { title description }
+    products(first: $first) { nodes { handle title price currency coverImage { url alt } } }
+  }
+}

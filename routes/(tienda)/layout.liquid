@@ -1,0 +1,14 @@
+<header class="site-header">
+  <div class="page-width header-inner">
+    <a class="brand" href="/">{{ store.name | escape }}</a>
+    <nav aria-label="Navegación principal">
+      <a href="/">Inicio</a>
+      <a href="/categorias/todas">Productos</a>
+      {% for item in data.main_menu.items %}
+        <a href="{{ item.url | escape }}"{% if item.openInNewTab %} target="_blank" rel="noopener"{% endif %}>{{ item.label | escape }}</a>
+      {% endfor %}
+    </nav>
+  </div>
+</header>
+<main class="page page-width">{{ content }}</main>
+<footer class="page-width section"><p>{{ store.name | escape }}</p></footer>

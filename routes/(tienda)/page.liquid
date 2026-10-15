@@ -1,0 +1,10 @@
+{% metadata title: store.name, description: store.description %}
+<section class="section">
+  <p class="eyebrow">Hecho para vos</p>
+  <h1>{{ store.name | escape }}</h1>
+  <p>{{ store.description | escape }}</p>
+  <p>Productos en esta página: {{ request.query.first }}</p>
+  <div class="product-grid">
+    {% for product in data.products.nodes %}{% render 'product-card', product: product %}{% endfor %}
+  </div>
+</section>
