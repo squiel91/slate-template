@@ -1,5 +1,5 @@
 query ($first: Int = 24) {
-  products(first: $first, sortBy: BEST_SELLING) {
+  products(first: $first, sortBy: "best-selling") {
     nodes { url title price currency coverImage { url alt } }
   }
 }

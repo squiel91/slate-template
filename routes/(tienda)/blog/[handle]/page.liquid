@@ -5,7 +5,7 @@
 <article class="section prose">
   <a href="/blog">Blog</a>
   <h1>{{ post.title | escape }}</h1>
-  <p><time datetime="{{ post.publishedAt }}">{{ post.publishedAt | date: '%d/%m/%Y' }}</time></p>
+  {% if post.publishedAt %}<p><time datetime="{{ post.publishedAt }}">{{ post.publishedAt | date: "%d/%m/%Y" }}</time></p>{% endif %}
   {% if post.coverImage %}<img src="{{ post.coverImage | image_url: width: 1200 | escape }}" alt="{{ post.coverImage.alt | escape }}">{% endif %}
   {{ post.html }}
 </article>

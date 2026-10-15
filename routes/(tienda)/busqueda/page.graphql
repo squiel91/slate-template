@@ -1,5 +1,5 @@
 query ($q: String = "", $page: Int = 1) {
-  results: products(query: $q, first: 24, page: $page, sortBy: RELEVANCE) {
+  results: products(query: $q, first: 24, page: $page, sortBy: "relevance") {
     nodes { url title price currency coverImage { url alt } }
     pageInfo { currentPage totalPages hasNextPage hasPreviousPage }
     totalCount

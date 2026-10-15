@@ -4,7 +4,7 @@ Local Tiendu Theme Engine v2 proof of concept, using Lienzo's CSS (MIT).
 
 - `/`: best sellers; `?first=2` changes the declared list size.
 - `/productos/<handle>`: a listed product with images, options and related products.
-- `/categorias/<handle>`: a public collection with sort (`?sort=PRICE_ASC`) and pages (`?page=2`); `todas` lists all products.
+- `/categorias/<handle>`: a public collection with sort (`?sort=price-asc`) and pages (`?page=2`); `todas` lists all products.
 - `/busqueda?q=<texto>`: product search.
 - `/paginas/<handle>`: a CMS page.
 - `/blog` and `/blog/<handle>`: blog posts.

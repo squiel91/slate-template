@@ -9,7 +9,7 @@ query ($handle: String!) {
     rating reviewsCount
     collections(first: 1) {
       name url
-      products(first: 4, sortBy: BEST_SELLING) { nodes { url title price currency coverImage { url alt } } }
+      products(first: 4, sortBy: "best-selling") { nodes { url title price currency coverImage { url alt } } }
     }
     seo { title description }
   }
