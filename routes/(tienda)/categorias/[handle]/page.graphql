@@ -1,6 +1,12 @@
-query ($handle: String!, $first: Int = 24) {
-  collection(handle: $handle) {
-    name description seo { title description }
-    products(first: $first) { nodes { handle title price currency coverImage { url alt } } }
+query ($handle: String!, $sort: ProductSort, $page: Int = 1) {
+  collection(handle: $handle) @required {
+    name description defaultSortBy
+    seo { title description }
+    sortOptions { value label }
+    products(first: 24, page: $page, sortBy: $sort) {
+      nodes { url title price currency coverImage { url alt } }
+      pageInfo { currentPage totalPages hasNextPage hasPreviousPage }
+      totalCount
+    }
   }
 }

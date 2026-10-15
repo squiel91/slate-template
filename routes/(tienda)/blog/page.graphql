@@ -1,0 +1,6 @@
+query ($page: Int = 1) {
+  posts: blogPosts(first: 12, page: $page) {
+    nodes { url title excerpt publishedAt coverImage { url alt } }
+    pageInfo { currentPage totalPages hasNextPage hasPreviousPage }
+  }
+}

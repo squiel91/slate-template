@@ -1,7 +1,16 @@
 query ($handle: String!) {
-  product(handle: $handle) {
-    title description price currency available
+  product(handle: $handle) @required {
+    title description price compareAtPrice currency available template
     coverImage { url alt }
+    images(first: 8) { url alt }
+    options { name values { value color } }
+    variants { id price available selectedOptions { name value } }
+    specifications { name value }
+    rating reviewsCount
+    collections(first: 1) {
+      name url
+      products(first: 4, sortBy: BEST_SELLING) { nodes { url title price currency coverImage { url alt } } }
+    }
     seo { title description }
   }
 }

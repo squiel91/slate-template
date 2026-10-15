@@ -1,0 +1,15 @@
+{% metadata title: 'Búsqueda', robots: 'noindex' %}
+<section class="section">
+  <h1>Búsqueda</h1>
+  <form action="{{ request.path }}" method="get" role="search">
+    <input type="search" name="q" value="{{ request.query.q | escape }}" placeholder="¿Qué estás buscando?" aria-label="Buscar productos">
+    <button type="submit">Buscar</button>
+  </form>
+  {% if request.query.q != blank %}
+    <p>{{ data.results.totalCount }} resultados para “{{ request.query.q | escape }}”</p>
+    <div class="product-grid">
+      {% for product in data.results.nodes %}{% render 'product-card', product: product %}{% endfor %}
+    </div>
+    {% render 'pagination', info: data.results.pageInfo, query: request.query %}
+  {% endif %}
+</section>

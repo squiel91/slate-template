@@ -3,11 +3,15 @@
     <a class="brand" href="/">{{ store.name | escape }}</a>
     <nav aria-label="Navegación principal">
       <a href="/">Inicio</a>
-      <a href="/categorias/todas">Productos</a>
+      {% if data.catalog.url %}<a href="{{ data.catalog.url }}">Productos</a>{% endif %}
+      <a href="/blog">Blog</a>
       {% for item in data.main_menu.items %}
         <a href="{{ item.url | escape }}"{% if item.openInNewTab %} target="_blank" rel="noopener"{% endif %}>{{ item.label | escape }}</a>
       {% endfor %}
     </nav>
+    <form class="header-search" action="/busqueda" method="get" role="search">
+      <input type="search" name="q" placeholder="Buscar productos" aria-label="Buscar productos">
+    </form>
   </div>
 </header>
 <main class="page page-width">{{ content }}</main>

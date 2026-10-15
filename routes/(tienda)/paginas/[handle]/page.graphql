@@ -1,0 +1,7 @@
+query ($handle: String!) {
+  page(handle: $handle) @required {
+    title html
+    coverImage { url alt }
+    seo { title description }
+  }
+}

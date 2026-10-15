@@ -1,0 +1,7 @@
+query ($handle: String!) {
+  post: blogPost(handle: $handle) @required {
+    title excerpt publishedAt html
+    coverImage { url alt }
+    seo { title description }
+  }
+}

@@ -1,0 +1,8 @@
+{% assign page = data.page %}
+{% assign title = page.seo.title | default: page.title %}
+{% metadata title: title, description: page.seo.description, image: page.coverImage %}
+<article class="section prose">
+  <h1>{{ page.title | escape }}</h1>
+  {% if page.coverImage %}<img src="{{ page.coverImage | image_url: width: 1200 | escape }}" alt="{{ page.coverImage.alt | escape }}">{% endif %}
+  {{ page.html }}
+</article>

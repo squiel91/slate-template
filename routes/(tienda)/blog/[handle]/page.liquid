@@ -1,0 +1,11 @@
+{% assign post = data.post %}
+{% assign title = post.seo.title | default: post.title %}
+{% assign description = post.seo.description | default: post.excerpt %}
+{% metadata title: title, description: description, image: post.coverImage %}
+<article class="section prose">
+  <a href="/blog">Blog</a>
+  <h1>{{ post.title | escape }}</h1>
+  <p><time datetime="{{ post.publishedAt }}">{{ post.publishedAt | date: '%d/%m/%Y' }}</time></p>
+  {% if post.coverImage %}<img src="{{ post.coverImage | image_url: width: 1200 | escape }}" alt="{{ post.coverImage.alt | escape }}">{% endif %}
+  {{ post.html }}
+</article>

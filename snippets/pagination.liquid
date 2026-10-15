@@ -1,0 +1,8 @@
+{% if info.totalPages > 1 %}
+  {% capture extra %}{% if query.q != blank %}&q={{ query.q | url_encode }}{% endif %}{% if query.sort != blank %}&sort={{ query.sort }}{% endif %}{% endcapture %}
+  <nav class="pagination" aria-label="Paginación">
+    {% if info.hasPreviousPage %}<a href="?page={{ info.currentPage | minus: 1 }}{{ extra }}" rel="prev">Anterior</a>{% endif %}
+    <span>Página {{ info.currentPage }} de {{ info.totalPages }}</span>
+    {% if info.hasNextPage %}<a href="?page={{ info.currentPage | plus: 1 }}{{ extra }}" rel="next">Siguiente</a>{% endif %}
+  </nav>
+{% endif %}

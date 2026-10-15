@@ -1,0 +1,6 @@
+{
+  "product": "/productos/:handle",
+  "collection": "/categorias/:handle",
+  "page": "/paginas/:handle",
+  "blog-post": "/blog/:handle"
+}

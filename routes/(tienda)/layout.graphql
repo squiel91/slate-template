@@ -1,3 +1,4 @@
 {
   main_menu: menu(handle: "principal") { items { label url openInNewTab } }
+  catalog: collection(handle: "todas") { url }
 }
