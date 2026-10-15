@@ -12,6 +12,12 @@
     <form class="header-search" action="/busqueda" method="get" role="search">
       <input type="search" name="q" placeholder="Buscar productos" aria-label="Buscar productos">
     </form>
+    <div class="header-actions">
+      <button type="button" data-search-open>Buscar</button>
+      <button type="button" data-account-open>Cuenta</button>
+      <button type="button" data-wishlist-open>Favoritos</button>
+      <button type="button" data-cart-open>Carrito (<span data-cart-quantity>0</span>)</button>
+    </div>
   </div>
 </header>
 <main class="page page-width">{{ content }}</main>

@@ -1,6 +1,6 @@
 query ($handle: String!) {
   product(handle: $handle) @required {
-    title description price compareAtPrice currency available template
+    id title description price compareAtPrice currency available template
     coverImage { url alt }
     images(first: 8) { url alt }
     options { name values { value color } }

@@ -9,5 +9,7 @@
 <body>
   {{ content }}
   {{ tiendu_body_end }}
+  {{ 'tiendu-sdk.js' | asset_url | script_tag }}
+  {{ 'theme.js' | asset_url | script_tag }}
 </body>
 </html>

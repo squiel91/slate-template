@@ -17,6 +17,18 @@
     <p>{{ option.name | escape }}: {{ option.values | map: 'value' | join: ', ' | escape }}</p>
   {% endfor %}
   {% unless product.available %}<p>Sin stock</p>{% endunless %}
+  {% assign first_variant = product.variants | first %}
+  {% if product.variants.size > 1 %}
+    <label>Variante:
+      <select data-variant-select>
+        {% for variant in product.variants %}
+          <option value="{{ variant.id }}" data-price="{{ variant.price }}"{% unless variant.available %} disabled{% endunless %}>{{ variant.selectedOptions | map: 'value' | join: ' / ' | escape }} — {{ variant.price | money: product.currency }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  {% endif %}
+  <button type="button" data-add-to-cart data-variant-id="{{ first_variant.id }}" data-price="{{ first_variant.price }}" data-title="{{ product.title | escape }}" data-currency="{{ product.currency }}"{% unless product.available and product.variants.size > 0 %} disabled{% endunless %}>Agregar al carrito</button>
+  <button type="button" data-wishlist-toggle data-product-id="{{ product.id }}">Guardar en favoritos</button>
   <div>{{ product.description | escape | newline_to_br }}</div>
   {% if product.specifications.size > 0 %}
     <dl>{% for spec in product.specifications %}<dt>{{ spec.name | escape }}</dt><dd>{{ spec.value | escape }}</dd>{% endfor %}</dl>
