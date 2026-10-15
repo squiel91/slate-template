@@ -22,6 +22,6 @@
   {% assign candidate = candidates | where: 'id', candidate_id | slice: 0, 1 %}
   {% assign related_products = related_products | concat: candidate %}
 {% endfor %}
-{% assign view = 'product-default' %}
-{% if product.template != blank %}{% assign view = 'product-' | append: product.template %}{% endif %}
+{% assign view = 'template-product-default' %}
+{% if product.template != blank %}{% assign view = 'template-product-' | append: product.template %}{% endif %}
 {% render view, product: product, related_products: related_products, catalog: data.catalog %}

@@ -7,6 +7,6 @@
   {% render 'structured-page', title: title, description: description, kind: 'WebPage' %}
 
 {% endhead %}
-{% assign view = 'page-default' %}
-{% if resource.template != blank %}{% assign view = 'page-' | append: resource.template %}{% endif %}
+{% assign view = 'template-page-default' %}
+{% if resource.template != blank %}{% assign view = 'template-page-' | append: resource.template %}{% endif %}
 {% render view, page: resource, catalog: data.catalog %}

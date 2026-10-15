@@ -7,6 +7,6 @@
   {% render 'structured-page', title: title, description: description, kind: 'CollectionPage' %}
 
 {% endhead %}
-{% assign view = 'collection-default' %}
-{% if resource.template != blank %}{% assign view = 'collection-' | append: resource.template %}{% endif %}
+{% assign view = 'template-collection-default' %}
+{% if resource.template != blank %}{% assign view = 'template-collection-' | append: resource.template %}{% endif %}
 {% render view, collection: resource, catalog: data.catalog %}

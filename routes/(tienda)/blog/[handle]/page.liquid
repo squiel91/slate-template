@@ -7,6 +7,6 @@
   {% render 'structured-page', title: title, description: description, kind: 'WebPage' %}
   {% render 'structured-article', article: resource, description: description %}
 {% endhead %}
-{% assign view = 'article-default' %}
-{% if resource.template != blank %}{% assign view = 'article-' | append: resource.template %}{% endif %}
+{% assign view = 'template-blog-post-default' %}
+{% if resource.template != blank %}{% assign view = 'template-blog-post-' | append: resource.template %}{% endif %}
 {% render view, article: resource, catalog: data.catalog %}
