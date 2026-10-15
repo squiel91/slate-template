@@ -967,5 +967,3 @@ export const Tiendu = () => {
 window.Tiendu = Tiendu
 
 export default Tiendu
-
-/* local theme tweak */
