@@ -1,0 +1,48 @@
+{%- comment -%}
+  Spanish long date: Martes 23 de Setiembre, 2024
+  Usage: {% render 'lib/format-date', datetime: article.publishedAt %}
+  The parameter cannot be named `date` — that name collides with the date filter.
+{%- endcomment -%}
+{%- if datetime -%}
+  {%- assign weekday_index = datetime | date: '%w' | append: '' -%}
+  {%- assign month_index = datetime | date: '%m' | append: '' -%}
+  {%- assign day_number = datetime | date: '%d' | plus: 0 -%}
+  {%- assign year_number = datetime | date: '%Y' -%}
+  {%- case weekday_index -%}
+    {%- when '0' -%}{%- assign weekday_name = 'Domingo' -%}
+    {%- when '1' -%}{%- assign weekday_name = 'Lunes' -%}
+    {%- when '2' -%}{%- assign weekday_name = 'Martes' -%}
+    {%- when '3' -%}{%- assign weekday_name = 'Miércoles' -%}
+    {%- when '4' -%}{%- assign weekday_name = 'Jueves' -%}
+    {%- when '5' -%}{%- assign weekday_name = 'Viernes' -%}
+    {%- when '6' -%}{%- assign weekday_name = 'Sábado' -%}
+  {%- endcase -%}
+  {%- case month_index -%}
+    {%- when '01' -%}{%- assign month_name = 'Enero' -%}
+    {%- when '1' -%}{%- assign month_name = 'Enero' -%}
+    {%- when '02' -%}{%- assign month_name = 'Febrero' -%}
+    {%- when '2' -%}{%- assign month_name = 'Febrero' -%}
+    {%- when '03' -%}{%- assign month_name = 'Marzo' -%}
+    {%- when '3' -%}{%- assign month_name = 'Marzo' -%}
+    {%- when '04' -%}{%- assign month_name = 'Abril' -%}
+    {%- when '4' -%}{%- assign month_name = 'Abril' -%}
+    {%- when '05' -%}{%- assign month_name = 'Mayo' -%}
+    {%- when '5' -%}{%- assign month_name = 'Mayo' -%}
+    {%- when '06' -%}{%- assign month_name = 'Junio' -%}
+    {%- when '6' -%}{%- assign month_name = 'Junio' -%}
+    {%- when '07' -%}{%- assign month_name = 'Julio' -%}
+    {%- when '7' -%}{%- assign month_name = 'Julio' -%}
+    {%- when '08' -%}{%- assign month_name = 'Agosto' -%}
+    {%- when '8' -%}{%- assign month_name = 'Agosto' -%}
+    {%- when '09' -%}{%- assign month_name = 'Setiembre' -%}
+    {%- when '9' -%}{%- assign month_name = 'Setiembre' -%}
+    {%- when '10' -%}{%- assign month_name = 'Octubre' -%}
+    {%- when '11' -%}{%- assign month_name = 'Noviembre' -%}
+    {%- when '12' -%}{%- assign month_name = 'Diciembre' -%}
+  {%- endcase -%}
+  {%- if weekday_name != blank and month_name != blank -%}
+    {{- weekday_name }} {{ day_number }} de {{ month_name }}, {{ year_number -}}
+  {%- else -%}
+    {{- datetime | date: '%d/%m/%Y' -}}
+  {%- endif -%}
+{%- endif -%}

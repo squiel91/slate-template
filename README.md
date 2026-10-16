@@ -4,10 +4,11 @@ Slate is a storefront theme designed to be used in [Tiendu](https://tiendu.uy). 
 
 The design is editorial: cream paper, serif display type and images without card chrome. Colors, fonts, spacing and radii are CSS custom properties in `assets/theme.css`. Spanish storefront routes cover home, products, collections (`/categorias`, including `/categorias/todas`), pages, blog, search and 404. Cart, checkout, account and wishlist use Tiendu's SDK and platform overlays.
 
-- `routes/`: Liquid pages, layouts and GraphQL data. `(tienda)` owns shared chrome.
-- `snippets/`: reusable markup, home features and resource templates.
+- `routes/`: `+page.liquid` and optional `+page.graphql` define a page; `+layout.liquid` and optional `+layout.graphql` wrap pages below them. The root `+error.liquid` handles 404s. The `+` is mandatory: unprefixed files are not route, layout or data entry points. `(tienda)` owns shared chrome.
+- Route-specific partials live in that route's `_snippets/` folder (for example `routes/(tienda)/_snippets/hero-carousel.liquid`). Use `{% render './_snippets/hero-carousel' %}` from the page. `_snippets/` and all descendants are excluded from routing.
+- `lib/`: reusable components grouped by purpose (`icons/`, `ui/`, `navigation/`, `seo/`). A group with only one item is a descriptive file instead: `product-card.liquid`, `collection-card.liquid`, `article-byline.liquid`, `content-blocks.liquid`, `format-date.liquid`. Use `{% render 'lib/product-card', product: product %}` or `{% render 'lib/icons/heart' %}`.
 - `queries/`: named data queries, including the 404's shared navigation.
-- `assets/`: CSS tokens, browser behavior and released SDK.
+- `assets/`: public files served as-is at `/assets/`, with subfolders supported. Reference paths relative to `assets/` with `asset_url` (for example `product/product.css`). Product scripts/styles are grouped in `assets/product/` and testimonial images in `assets/testimonials/`. The released SDK stays at `assets/tiendu-sdk.js`.
 - `config/theme.json`: engine/name; `config/routes.json`: public resource patterns.
 - `DESIGN.md`: visual design; `AGENTS.md`: coding and resource conventions.
 

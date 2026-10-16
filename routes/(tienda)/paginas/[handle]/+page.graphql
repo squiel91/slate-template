@@ -1,0 +1,36 @@
+query ($handle: String!) {
+  page(handle: $handle) @required {
+    title
+    template
+    coverImage {
+      url
+      alt
+    }
+    seo {
+      title
+      description
+    }
+    content {
+      ... on ParagraphBlock {
+        type
+        text
+      }
+      ... on HeadingBlock {
+        type
+        level
+        text
+      }
+      ... on ImageBlock {
+        type
+        image {
+          url
+          alt
+        }
+      }
+      ... on HtmlBlock {
+        type
+        code
+      }
+    }
+  }
+}

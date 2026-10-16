@@ -1,0 +1,30 @@
+{
+  shop: store {
+    name
+    description
+    url
+    countryCode
+    currency
+    whatsappNumber
+    emailAddress
+  }
+  main_menu: menu(handle: "principal") {
+    title
+    items {
+      label
+      url
+      openInNewTab
+    }
+  }
+  footer_menu: menu(handle: "footer") {
+    title
+    items {
+      label
+      url
+      openInNewTab
+    }
+  }
+  catalog: collection(handle: "todas") {
+    url
+  }
+}

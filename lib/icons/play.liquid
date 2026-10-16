@@ -1,0 +1,24 @@
+{%- comment -%}
+  Lucide icon: play
+  Usage: {% render 'lib/icons/play', size: 18, stroke_width: 1.6 %}
+{%- endcomment -%}
+{%- liquid
+  assign size = size | default: 24
+  assign stroke_width = stroke_width | default: 1.5
+-%}
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="{{ size }}"
+  height="{{ size }}"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="{{ stroke_width }}"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class="icon icon-play{% if class %} {{ class }}{% endif %}"
+  aria-hidden="true"
+  focusable="false"
+>
+  <polygon points="6 3 20 12 6 21 6 3" />
+</svg>

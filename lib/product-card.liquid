@@ -1,0 +1,51 @@
+{% assign product_image = product.coverImage %}
+{% if product_image == blank %}{% assign product_image = product.images | first %}{% endif %}
+{% assign price_cents = product.priceMin | default: product.price %}
+{% assign compare_at_cents = product.compareAtPrice %}
+{% assign product_currency = product.currency | default: store.currency %}
+{% assign available_variants = product.variants | where: 'available', true %}
+{% assign available_variant = available_variants | first %}
+
+<article class="product-card" data-product-card data-product-id="{{ product.id }}">
+  <button
+    type="button"
+    class="wishlist-heart"
+    data-action="toggle-wishlist"
+    data-product-id="{{ product.id }}"
+    aria-pressed="false"
+    aria-label="Guardar en favoritos"
+  >
+    {% render 'lib/icons/heart', size: 20, stroke_width: 1.8 %}
+  </button>
+  <a class="product-card__link" href="{{ product.url | escape }}">
+    <span class="media media--product">
+      {% if product_image %}
+        <img class="media__img" src="{{ product_image.url | escape }}" alt="{{ product_image.alt | default: product.title | escape }}" loading="lazy">
+      {% endif %}
+    </span>
+    <h3 class="product-card__title">{{ product.title | escape }}</h3>
+  </a>
+  {% render 'lib/ui/rating-stars', rating: product.rating, count: product.reviewsCount, star_size: 14 %}
+
+  {% if price_cents != blank %}
+    <p class="product-card__price">
+      {% if compare_at_cents != blank and compare_at_cents > price_cents %}<s>{{ compare_at_cents | money: product_currency }}</s>{% endif %}
+      {% if product.priceMax != blank and product.priceMax != product.priceMin %}Desde {% endif %}{{ price_cents | money: product_currency }}
+    </p>
+  {% endif %}
+
+  <div class="product-card__action">
+    {% if product.available == false %}
+      <p class="product-card__meta">Agotado</p>
+    {% elsif product.variants.size > 1 %}
+      <a class="button-quiet" href="{{ product.url | escape }}">Ver opciones</a>
+    {% elsif available_variant %}
+      <form data-product-form>
+        <input type="hidden" name="variant_id" value="{{ available_variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button class="button-quiet" type="submit" data-action="add-to-cart" data-variant-id="{{ available_variant.id }}" data-product-title="{{ product.title | escape }}" data-product-currency="{{ product_currency | escape }}" data-price-in-cents="{{ available_variant.price | default: price_cents }}">Agregar</button>
+        <p role="alert" data-product-error hidden></p>
+      </form>
+    {% endif %}
+  </div>
+</article>

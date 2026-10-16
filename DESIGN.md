@@ -95,7 +95,7 @@ Asymmetry is welcome: staggered testimonials, a featured blog post that is half 
 - **Light button:** cream fill on dark hero slides.
 - **Text link:** small sans, optional 16px stroke icon (`stroke_width` ~1.6–1.7).
 - **Fields:** elevated fill, line border, same radius and min-height as buttons. Focus uses an ink outline offset.
-- **Icons:** Lucide snippets in `snippets/icon-*.liquid`. Stroke, not fill, unless the symbol is a rating star.
+- **Icons:** Lucide partials in `lib/icons/*.liquid`. Stroke, not fill, unless the symbol is a rating star.
 
 ## Motion
 

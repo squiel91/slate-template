@@ -1,0 +1,56 @@
+query ($handle: String!, $sort: ProductSort, $page: Int = 1) {
+  collection(handle: $handle) @required {
+    name
+    handle
+    url
+    description
+    template
+    coverImage {
+      url
+      alt
+    }
+    defaultSortBy
+    sortOptions {
+      value
+      label
+    }
+    seo {
+      title
+      description
+    }
+    products(first: 20, page: $page, sortBy: $sort) {
+      nodes {
+        id
+        handle
+        url
+        title
+        price
+        priceMin
+        priceMax
+        compareAtPrice
+        currency
+        available
+        coverImage {
+          url
+          alt
+        }
+        rating
+        reviewsCount
+        variants {
+          id
+          sku
+          price
+          stock
+          available
+        }
+      }
+      pageInfo {
+        currentPage
+        totalPages
+        hasNextPage
+        hasPreviousPage
+      }
+      totalCount
+    }
+  }
+}

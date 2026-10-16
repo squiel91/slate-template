@@ -1,0 +1,36 @@
+query ($q: String = "", $page: Int = 1) {
+  results: products(query: $q, first: 20, page: $page, sortBy: "relevance") {
+    nodes {
+      id
+      handle
+      url
+      title
+      price
+      priceMin
+      priceMax
+      compareAtPrice
+      currency
+      available
+      coverImage {
+        url
+        alt
+      }
+      rating
+      reviewsCount
+      variants {
+        id
+        sku
+        price
+        stock
+        available
+      }
+    }
+    pageInfo {
+      currentPage
+      totalPages
+      hasNextPage
+      hasPreviousPage
+    }
+    totalCount
+  }
+}

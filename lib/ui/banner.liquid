@@ -1,0 +1,34 @@
+{% assign banner_image_url = '' | default: '' %}
+{% assign heading_tag = 'h2' %}
+{% if 'h2' == 'h1' %}{% assign heading_tag = 'h1' %}{% endif %}
+{% assign banner_class = 'banner banner--plain' %}
+{% if banner_image_url != blank %}{% assign banner_class = 'banner banner--hero banner--has-media' %}{% endif %}
+
+<section class="{{ banner_class }}" aria-labelledby="banner-heading-banner">
+  {% if banner_image_url != blank %}
+    <div class="banner__media">
+      <img
+        src="{{ banner_image_url | image_url: width: 1800 | escape }}"
+        alt="{{ '' | default: 'Título' | escape }}"
+        fetchpriority="high"
+      >
+    </div>
+  {% endif %}
+
+  <div class="banner__content page-width">
+    {% if heading_tag == 'h1' %}
+      <h1 id="banner-heading-banner">{{ 'Título' | default: store.name | escape }}</h1>
+    {% else %}
+      <h2 id="banner-heading-banner">{{ 'Título' | default: store.name | escape }}</h2>
+    {% endif %}
+    {% if 'Texto del banner' != blank %}
+      <p>Texto del banner</p>
+    {% endif %}
+    {% if 'Ver más' != blank and '/' != blank %}
+      <a class="{% if banner_image_url != blank %}button button--light{% else %}button{% endif %}" href="/">
+        Ver más
+        {% render 'lib/icons/arrow-right', size: 16, stroke_width: 1.7 %}
+      </a>
+    {% endif %}
+  </div>
+</section>

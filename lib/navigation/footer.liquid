@@ -1,0 +1,31 @@
+<footer class="site-footer">
+  <div class="page-width">
+    <p class="site-footer__mark">{{ shop.name | escape }}</p>
+    <p class="site-footer__lede">{{ shop.description | default: 'Una tienda online con una selección cuidada, lista para llevar a casa.' | escape }}</p>
+    <div class="site-footer__rule" aria-hidden="true"></div>
+    <div class="site-footer__row">
+      {% if menu.items.size > 0 %}
+        <nav class="site-footer__cluster" aria-labelledby="footer-menu">
+          <h2 id="footer-menu">{{ menu.title | default: 'Tienda' | escape }}</h2>
+          <ul class="site-footer__inline">
+            {% for link in menu.items %}
+              <li><a href="{{ link.url | escape }}"{% if link.openInNewTab %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ link.label | escape }}</a></li>
+            {% endfor %}
+          </ul>
+        </nav>
+      {% endif %}
+      <nav class="site-footer__cluster" aria-labelledby="footer-social">
+        <h2 id="footer-social">Seguinos</h2>
+        <ul class="site-footer__social">
+          <li><a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">{% render 'lib/icons/instagram', size: 18, stroke_width: 1.6 %} Instagram</a></li>
+          <li><a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">{% render 'lib/icons/facebook', size: 18, stroke_width: 1.6 %} Facebook</a></li>
+          {% if shop.whatsappNumber != blank %}<li><a href="https://wa.me/{{ shop.whatsappNumber | replace: '+', '' | replace: ' ', '' | escape }}" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>{% endif %}
+        </ul>
+      </nav>
+    </div>
+    <div class="site-footer__bottom">
+      <div>&copy; {{ 'now' | date: '%Y' }} {{ shop.name | escape }}</div>
+      <div>Tienda co-creada junto a <a href="https://tiendu.uy" target="_blank" rel="noopener noreferrer">Tiendu</a></div>
+    </div>
+  </div>
+</footer>

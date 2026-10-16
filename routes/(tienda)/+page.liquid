@@ -1,0 +1,13 @@
+{% metadata title: store.name, description: store.description %}
+{% head %}
+  {% render 'lib/seo/structured-page', title: store.name, description: store.description %}
+  {{ 'hero-carousel.js' | asset_url | script_tag }}
+{% endhead %}
+{% render './_snippets/hero-carousel', catalog: data.catalog, decoration: data.decoration %}
+{% render './_snippets/featured-collections', collections: data.featured_collections, catalog: data.featured %}
+{% render './_snippets/featured-products', collection: data.featured %}
+{% render './_snippets/split-feature', collection: data.editorial %}
+{% render './_snippets/highlights' %}
+{% render './_snippets/testimonials' %}
+{% render './_snippets/featured-blog', posts: data.posts.nodes %}
+{% render './_snippets/newsletter' %}

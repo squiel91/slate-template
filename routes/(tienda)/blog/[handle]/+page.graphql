@@ -1,0 +1,38 @@
+query ($handle: String!) {
+  article: blogPost(handle: $handle) @required {
+    title
+    excerpt
+    template
+    publishedAt
+    coverImage {
+      url
+      alt
+    }
+    seo {
+      title
+      description
+    }
+    content {
+      ... on ParagraphBlock {
+        type
+        text
+      }
+      ... on HeadingBlock {
+        type
+        level
+        text
+      }
+      ... on ImageBlock {
+        type
+        image {
+          url
+          alt
+        }
+      }
+      ... on HtmlBlock {
+        type
+        code
+      }
+    }
+  }
+}

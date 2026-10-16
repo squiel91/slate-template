@@ -1,0 +1,58 @@
+{% assign current_sort = request.query.sort | default: collection.defaultSortBy %}
+<section class="page page-width">
+    {% render 'lib/navigation/breadcrumbs', parent_url: '/categorias', parent_label: 'Categorías', current_label: collection.name %}
+
+    <header class="page-header">
+      {% if collection.coverImage %}
+        <span class="media media--hero-page">
+          <img class="media__img" src="{{ collection.coverImage.url | escape }}" alt="{{ collection.coverImage.alt | default: collection.name | escape }}">
+        </span>
+      {% endif %}
+      <h1>{{ collection.name | escape }}</h1>
+      {% if collection.description != blank %}
+        <div class="prose">{{ collection.description }}</div>
+      {% endif %}
+    </header>
+
+
+      <div class="toolbar">
+        <p>{{ collection.products.totalCount }} {% if collection.products.totalCount == 1 %}producto{% else %}productos{% endif %}</p>
+        {% if collection.sortOptions.size > 1 %}
+          <form action="{{ collection.url | escape }}" method="get" class="collection-sort-form">
+            <label class="visually-hidden" for="collection-sort-main-collection">Ordenar por</label>
+            <select id="collection-sort-main-collection" name="sort" data-auto-submit aria-label="Ordenar por">
+              {% for option in collection.sortOptions %}
+                {% case option.value %}
+                  {% when 'manual' %}{% assign option_label = 'Destacados' %}
+                  {% when 'best-selling' %}{% assign option_label = 'Más vendidos' %}
+                  {% when 'title-asc' %}{% assign option_label = 'Alfabéticamente, A-Z' %}
+                  {% when 'title-desc' %}{% assign option_label = 'Alfabéticamente, Z-A' %}
+                  {% when 'price-asc' %}{% assign option_label = 'Precio: menor a mayor' %}
+                  {% when 'price-desc' %}{% assign option_label = 'Precio: mayor a menor' %}
+                  {% when 'newest' %}{% assign option_label = 'Fecha: más reciente' %}
+                  {% when 'oldest' %}{% assign option_label = 'Fecha: más antigua' %}
+                  {% else %}{% assign option_label = option.label %}
+                {% endcase %}
+                <option value="{{ option.value | escape }}"{% if option.value == current_sort %} selected{% endif %}>{{ option_label | escape }}</option>
+              {% endfor %}
+            </select>
+            <noscript><button class="button" type="submit">Ordenar</button></noscript>
+          </form>
+        {% endif %}
+      </div>
+
+      {% if collection.products.totalCount > 0 %}
+        <ul class="product-grid">
+          {% for product in collection.products.nodes %}
+            <li>{% render 'lib/product-card', product: product %}</li>
+          {% endfor %}
+        </ul>
+        {% render 'lib/ui/pagination', info: collection.products.pageInfo, query: request.query %}
+      {% else %}
+        <div class="empty-state">
+          <p>No hay productos en esta categoría.</p>
+          <a class="button" href="{{ catalog.url | escape }}">Ver todos los productos</a>
+        </div>
+      {% endif %}
+
+</section>
