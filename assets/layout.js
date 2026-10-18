@@ -257,12 +257,11 @@ function initNewsletter() {
       button.textContent = "Enviando…"
 
       try {
-        const response = await fetch("/tiendu/api/subscribers", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        })
-        if (!response.ok) throw new Error("No se pudo completar la suscripción.")
+        const { subscriberCreate } = await window.Tiendu().mutate(
+          "mutation($email: String!) { subscriberCreate(email: $email) { userErrors { code message } } }",
+          { email },
+        )
+        if (subscriberCreate.userErrors.length) throw new Error(subscriberCreate.userErrors[0].message)
         input.value = ""
         const dialog = form.nextElementSibling
         if (dialog instanceof HTMLDialogElement) dialog.showModal()

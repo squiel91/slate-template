@@ -629,7 +629,17 @@ export const Tiendu = (options = {}) => {
 	}
 
 	clients.set(key, { client, search: searchDefaults })
-	if (options.analytics?.pageViews !== false) sessionReady = track('page_view')
+	if (options.analytics?.pageViews !== false) {
+		const pageView = track('page_view')
+		// Without a stored session the page view creates it, so the first API
+		// call, Function call or overlay waits for it and shares one session.
+		// The wait never exceeds 3 s: analytics must not block the store.
+		if (!sessionToken)
+			sessionReady = Promise.race([
+				pageView,
+				new Promise(resolve => setTimeout(resolve, 3000))
+			])
+	}
 	return client
 }
 if (typeof window !== 'undefined') window.Tiendu = Tiendu
