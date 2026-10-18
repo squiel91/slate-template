@@ -1,4 +1,4 @@
-const tiendu = window.Tiendu()
+const tiendu = window.Tiendu({ search: { suggestions: [] } })
 const storeCurrency = document.body?.dataset.storeCurrency || "UYU"
 
 function updateCartQuantity(quantity) {
@@ -73,7 +73,7 @@ async function openStoreOverlay(button, opener) {
 
 async function syncCartQuantity() {
   try {
-    const result = await tiendu.cart.getQuantity()
+    const result = await window.Tiendu().cart.getQuantity()
     updateCartQuantity(result.quantity)
   } catch {
     updateCartQuantity(0)
@@ -94,9 +94,7 @@ function initCart() {
   document.addEventListener("click", (event) => {
     const cartButton = event.target.closest('[data-action="open-cart"]')
     if (cartButton) {
-      openStoreOverlay(cartButton, () =>
-        tiendu.cart.open((result) => updateCartQuantity(result.updatedCartItemsQuantity))
-      )
+      openStoreOverlay(cartButton, () => window.Tiendu().checkout.open())
       return
     }
 
@@ -132,15 +130,11 @@ function initCart() {
 
     try {
       if (error) error.hidden = true
-      await tiendu.cart.addProductVariant(
-        variant,
-        quantity,
-        (result) => updateCartQuantity(result.updatedCartItemsQuantity),
-        {
-          title: button.dataset.productTitle || "",
-          currency: button.dataset.productCurrency || storeCurrency,
-        }
-      )
+      const cart = await tiendu.cart.add(variant, quantity, {
+        title: button.dataset.productTitle || "",
+        currency: button.dataset.productCurrency || storeCurrency,
+      })
+      updateCartQuantity(cart.quantity)
     } catch {
       if (error) {
         error.textContent = "No se pudo agregar el producto. Intentá nuevamente."
@@ -178,7 +172,7 @@ function syncWishlistHearts(productIds) {
 
 async function syncShopperStatus() {
   try {
-    const status = await tiendu.shopper.getStatus()
+    const status = await window.Tiendu().shopper.getStatus()
     updateWishlistQuantity(status.wishlistCount)
     syncWishlistHearts(status.wishlistProductIds)
     return status
@@ -194,14 +188,14 @@ function initWishlist() {
     const accountButton = event.target.closest('[data-action="open-account"]')
     if (accountButton) {
       event.preventDefault()
-      await openStoreOverlay(accountButton, () => tiendu.shopper.open({ mode: "sign-in" }))
+      await openStoreOverlay(accountButton, () => window.Tiendu().shopper.open({ mode: "sign-in" }))
       return
     }
 
     const wishlistButton = event.target.closest('[data-action="open-wishlist"]')
     if (wishlistButton) {
       event.preventDefault()
-      await openStoreOverlay(wishlistButton, () => tiendu.wishlist.open())
+      await openStoreOverlay(wishlistButton, () => window.Tiendu().wishlist.open())
       return
     }
 
@@ -213,12 +207,12 @@ function initWishlist() {
 
     heart.disabled = true
     try {
-      const status = await tiendu.shopper.getStatus()
+      const status = await window.Tiendu().shopper.getStatus()
       if (!status.shopper) {
-        await openStoreOverlay(heart, () => tiendu.shopper.open({ mode: "sign-up", productId }))
+        await openStoreOverlay(heart, () => window.Tiendu().shopper.open({ mode: "sign-up", productId }))
         return
       }
-      const result = await tiendu.wishlist.toggle(productId)
+      const result = await window.Tiendu().wishlist.toggle(productId)
       const pressed = Boolean(result?.saved)
       heart.setAttribute("aria-pressed", String(pressed))
       heart.setAttribute("aria-label", pressed ? "Quitar de favoritos" : "Guardar en favoritos")
@@ -263,7 +257,12 @@ function initNewsletter() {
       button.textContent = "Enviando…"
 
       try {
-        await tiendu.subscribers.add(email)
+        const response = await fetch("/tiendu/api/subscribers", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        })
+        if (!response.ok) throw new Error("No se pudo completar la suscripción.")
         input.value = ""
         const dialog = form.nextElementSibling
         if (dialog instanceof HTMLDialogElement) dialog.showModal()
@@ -292,7 +291,7 @@ function initActions() {
       const form = searchButton.closest("[data-search-trigger]")
       const input = form?.querySelector('input[name="q"]')
       const query = searchButton.dataset.searchQuery || input?.value || ""
-      await openStoreOverlay(searchButton, () => tiendu.search.open({ query }))
+      await openStoreOverlay(searchButton, () => window.Tiendu().search.open({ query }))
       return
     }
 
@@ -309,7 +308,7 @@ function initActions() {
     event.preventDefault()
     const input = form.querySelector('input[name="q"]')
     await openStoreOverlay(form.querySelector('[data-action="open-search"]') || form, () =>
-      tiendu.search.open({ query: input?.value || "" })
+      window.Tiendu().search.open({ query: input?.value || "" })
     )
   })
 }

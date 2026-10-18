@@ -291,15 +291,11 @@ function initProduct() {
 
     try {
       if (error) error.hidden = true
-      await tiendu.cart.addProductVariant(
-        variant,
-        quantity,
-        (result) => updateCartQuantity(result.updatedCartItemsQuantity),
-        {
-          title: button.dataset.productTitle || "",
-          currency: button.dataset.productCurrency || productRoot.dataset.productCurrency || storeCurrency,
-        }
-      )
+      const cart = await tiendu.cart.add(variant, quantity, {
+        title: button.dataset.productTitle || "",
+        currency: button.dataset.productCurrency || productRoot.dataset.productCurrency || storeCurrency,
+      })
+      updateCartQuantity(cart.quantity)
     } catch {
       if (error) {
         error.textContent = "No se pudo agregar el producto. Intentá nuevamente."
@@ -317,14 +313,14 @@ function initProduct() {
 
   const priceInCents = Number(productRoot.dataset.analyticsPriceInCents || button?.dataset.priceInCents)
   const variant = Number.isFinite(priceInCents) ? { id: variantId, priceInCents } : { id: variantId }
-  tiendu.analytics.trackViewContent(
-    {
+  tiendu.track("view_item", {
+    product: {
       title: productRoot.dataset.analyticsProductTitle || button?.dataset.productTitle || "",
       currency: productRoot.dataset.productCurrency || storeCurrency,
       ...(Number.isFinite(priceInCents) ? { basePriceInCents: priceInCents } : {})
     },
-    variant
-  )
+    variant,
+  })
 
   for (const form of productRoot.querySelectorAll("[data-product-form]")) {
     if (!syncAttributeSelection(form, galleryController)) syncVariantForm(form, galleryController)
