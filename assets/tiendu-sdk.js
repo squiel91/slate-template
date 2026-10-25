@@ -1,5 +1,5 @@
-/*! tiendu-sdk 2.0.0 */
-const getCurrency = (preferredCurrency) => {
+/*! tiendu-sdk 2.3.0 */
+const getCurrency = preferredCurrency => {
 	if (typeof document === 'undefined' && typeof preferredCurrency !== 'string')
 		return 'UYU'
 	const currency = preferredCurrency ?? document.body?.dataset?.storeCurrency
@@ -18,7 +18,7 @@ const generateEventId = () => {
 	return `evt_${Date.now()}_${Math.random().toString(36).slice(2)}`
 }
 
-const readCookie = (name) => {
+const readCookie = name => {
 	if (typeof document === 'undefined' || !document.cookie) return null
 	const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 	const match = document.cookie.match(
@@ -28,9 +28,8 @@ const readCookie = (name) => {
 }
 
 const PRODUCT_VARIANT_ID_PREFIX = 'TIENDU_PRODUCT_VARIANT_ID_'
-const variantContentId = (variantId) =>
-	`${PRODUCT_VARIANT_ID_PREFIX}${variantId}`
-const buildCheckoutContents = (items) => {
+const variantContentId = variantId => `${PRODUCT_VARIANT_ID_PREFIX}${variantId}`
+const buildCheckoutContents = items => {
 	if (!Array.isArray(items)) return []
 	const result = []
 	for (const item of items) {
@@ -139,7 +138,7 @@ const eventPayloads = {
 		const ga4Data = {
 			currency: getCurrency(),
 			value,
-			items: contents.map((entry) => ({
+			items: contents.map(entry => ({
 				item_id: entry.id,
 				quantity: entry.quantity
 			}))
@@ -164,7 +163,7 @@ const eventPayloads = {
 			currency: getCurrency(),
 			value,
 			...(orderId ? { transaction_id: orderId } : {}),
-			items: contents.map((entry) => ({
+			items: contents.map(entry => ({
 				item_id: entry.id,
 				quantity: entry.quantity
 			}))
@@ -184,6 +183,8 @@ let activeOverlay = null
  * @param {string} [options.origin] Origen de la Storefront API.
  * @param {Object} [options.search] suggestions: lista de búsquedas sugeridas.
  * @param {Object} [options.analytics] pageViews: false desactiva la vista automática (SPA).
+ * @param {Object} [options.couponLinks] enabled: false desactiva la apertura automática de enlaces con cupones.
+ * @param {Object} [options.session] persist: false mantiene la sesión solo en memoria, sin leer ni escribir localStorage.
  * @returns {Object} Cliente compartido por origen y tienda.
  */
 export const Tiendu = (options = {}) => {
@@ -206,19 +207,20 @@ export const Tiendu = (options = {}) => {
 	const trackingEnabled =
 		document.querySelector('meta[name="tiendu:analytics"]')?.content !== 'off'
 	const searchDefaults = { suggestions: options.search?.suggestions ?? [] }
+	const persistSession = options.session?.persist !== false
 	const storageKey = `tiendu:shopper:${key}`
 	let sessionToken = null
 	try {
-		sessionToken = window.localStorage.getItem(storageKey)
+		if (persistSession) sessionToken = window.localStorage.getItem(storageKey)
 	} catch {}
-	const saveToken = (token) => {
+	const saveToken = token => {
 		if (typeof token !== 'string' || !token || token === sessionToken) return
 		sessionToken = token
 		try {
-			window.localStorage.setItem(storageKey, token)
+			if (persistSession) window.localStorage.setItem(storageKey, token)
 		} catch {}
 	}
-	const acceptTokens = (value) => {
+	const acceptTokens = value => {
 		if (!value || typeof value !== 'object') return
 		if (typeof value.session?.token === 'string') saveToken(value.session.token)
 		for (const child of Object.values(value)) acceptTokens(child)
@@ -237,12 +239,33 @@ export const Tiendu = (options = {}) => {
 	 * @param {string} [operationName] Nombre de la operación.
 	 * @returns {Promise<Object>} El objeto data completo.
 	 */
-	async function request(query, variables = {}, operationName) {
-		await sessionReady
+	async function request(query, variables = {}, operationName, signal) {
+		if (signal) {
+			await new Promise((resolve, reject) => {
+				const abort = () => {
+					signal.removeEventListener('abort', abort)
+					reject(signal.reason ?? new Error('Request aborted'))
+				}
+				signal.addEventListener('abort', abort, { once: true })
+				if (signal.aborted) abort()
+				else
+					sessionReady.then(
+						() => {
+							signal.removeEventListener('abort', abort)
+							resolve()
+						},
+						error => {
+							signal.removeEventListener('abort', abort)
+							reject(error)
+						}
+					)
+			})
+		} else await sessionReady
 		const response = await fetch(
 			`${base}/${encodeURIComponent(handle)}/api/graphql`,
 			{
 				method: 'POST',
+				...(signal ? { signal } : {}),
 				credentials: 'omit',
 				headers: { 'Content-Type': 'application/json', ...sessionHeaders() },
 				body: JSON.stringify({ query, variables, operationName })
@@ -375,12 +398,33 @@ export const Tiendu = (options = {}) => {
 				iframe.remove()
 				document.documentElement.style.overflow = restoreOverflow
 				if (activeOverlay === cleanup) activeOverlay = null
-				if (!fromHistory && history.state?.tienduOverlayId === historyId)
-					history.back()
+				if (!fromHistory && history.state?.tienduOverlayId === historyId) {
+					if ((history.state.tienduOverlayDepth ?? 1) > 1)
+						history.go(-history.state.tienduOverlayDepth)
+					else history.back()
+				}
 				if (!ready) reject(new Error('La ventana se cerró antes de cargar.'))
+				// The overlay may have changed the cart or the shopper: pages
+				// refresh their badges on this event.
+				window.dispatchEvent(
+					new CustomEvent('tiendu:overlay-close', { detail: { overlay } })
+				)
 			}
-			const pop = () => cleanup(true)
-			const receive = (event) => {
+			const pop = () => {
+				if (
+					overlay === 'checkout' &&
+					history.state?.tienduOverlayId === historyId
+				) {
+					iframe.contentWindow.postMessage(
+						{
+							type: 'checkout-history-navigation',
+							step: history.state.tienduOverlayStep
+						},
+						base
+					)
+				} else cleanup(true)
+			}
+			const receive = event => {
 				if (event.source !== iframe.contentWindow || event.origin !== base)
 					return
 				const message = event.data
@@ -436,16 +480,30 @@ export const Tiendu = (options = {}) => {
 						Array.isArray(message.items) &&
 						!firedSteps.has(message.step)
 					) {
-						if (message.step === 'delivery' || message.step === 'success') {
-							firedSteps.add(message.step)
-							void track(
-								message.step === 'delivery' ? 'begin_checkout' : 'purchase',
-								message
-							)
+						if (
+							message.checkoutStarted ||
+							message.step === 'delivery' ||
+							message.step === 'contact' ||
+							message.step === 'success'
+						) {
+							const event =
+								message.step === 'success' ? 'purchase' : 'begin_checkout'
+							if (!firedSteps.has(event)) {
+								firedSteps.add(event)
+								void track(event, message)
+							}
 						}
 					}
-					history.replaceState(
-						{ ...history.state, tienduOverlayStep: message.step },
+					if (message.historyAction === 'none') return
+					const push =
+						overlay === 'checkout' && message.historyAction === 'push'
+					history[push ? 'pushState' : 'replaceState'](
+						{
+							...history.state,
+							tienduOverlayStep: message.step,
+							tienduOverlayDepth:
+								(history.state?.tienduOverlayDepth ?? 1) + (push ? 1 : 0)
+						},
 						'',
 						window.location.href
 					)
@@ -457,6 +515,7 @@ export const Tiendu = (options = {}) => {
 				{
 					...history.state,
 					tienduOverlayId: historyId,
+					tienduOverlayDepth: 1,
 					tienduOverlay: overlay
 				},
 				'',
@@ -470,10 +529,12 @@ export const Tiendu = (options = {}) => {
 			document.body.appendChild(iframe)
 		})
 	}
-	const checked = (payload) => {
+	const checked = payload => {
 		if (payload.userErrors?.length)
 			throw Object.assign(new Error(payload.userErrors[0].message), {
-				userErrors: payload.userErrors
+				userErrors: payload.userErrors,
+				externalReference: payload.externalReference,
+				code: payload.userErrors[0].code
 			})
 		return payload
 	}
@@ -522,7 +583,7 @@ export const Tiendu = (options = {}) => {
 	 * @param {number|string} productId Id del producto.
 	 * @returns {Promise<Object>} saved, count y productIds.
 	 */
-	const toggle = async (productId) => {
+	const toggle = async productId => {
 		const status = await getStatus()
 		const saved = !status.wishlistProductIds.includes(Number(productId))
 		const name = saved ? 'wishlistAdd' : 'wishlistRemove'
@@ -537,6 +598,221 @@ export const Tiendu = (options = {}) => {
 		const ids = payload.customer.wishlistProductIds.map(Number)
 		notifyStatus()
 		return { saved, count: ids.length, productIds: ids }
+	}
+	const paymentWindows = new Map()
+	const paymentStorageKey = `tiendu:payment:${key}`
+	let returnedPaymentReference = null
+	const consumePaymentReference = () => {
+		if (typeof window === 'undefined' || !window.location?.href) return
+		const url = new URL(window.location.href)
+		const reference = url.searchParams.get('tienduPayment')
+		if (reference) {
+			returnedPaymentReference = reference
+			url.searchParams.delete('tienduPayment')
+			window.history.replaceState(window.history.state, '', url.href)
+			try {
+				if (persistSession) window.sessionStorage.setItem(paymentStorageKey, reference)
+			} catch {}
+		}
+	}
+	consumePaymentReference()
+	const currentPaymentReference = () => {
+		consumePaymentReference()
+		if (returnedPaymentReference) return returnedPaymentReference
+		try {
+			if (persistSession) return window.sessionStorage.getItem(paymentStorageKey)
+		} catch {}
+		return null
+	}
+	/**
+	 * Lee el estado verificado de un intento de pago; nunca interpreta el retorno como aprobación.
+	 * @method checkout.getPayment
+	 * @param {string} [externalReference] Referencia; por defecto tienduPayment de la URL o el último intento de esta pestaña.
+	 * @returns {Promise<Object|null>} Estado del intento y pedido, si existe.
+	 */
+	const getPayment = async (
+		externalReference = currentPaymentReference(),
+		signal
+	) => {
+		if (!externalReference) return null
+		const data = await request(
+			'query($reference:String!){checkoutPayment(reference:$reference){reference state lastPaymentStatus canResume paymentUrl orderId orderStatus}}',
+			{ reference: externalReference },
+			undefined,
+			signal
+		)
+		return data.checkoutPayment
+	}
+	/**
+	 * Espera el resultado verificado; al vencer el plazo devuelve el último estado pendiente.
+	 * @method checkout.waitForPayment
+	 * @param {string} [externalReference] Referencia del intento; por defecto la del retorno.
+	 * @param {Object} [options] timeoutMs (120000 por defecto, máximo 600000) y signal para cancelar la espera.
+	 * @returns {Promise<Object|null>} Estado verificado; REJECTED no termina la espera. EXPIRED/REPLACED no cancelan un pago iniciado.
+	 */
+	const waitForPayment = async (
+		externalReference = currentPaymentReference(),
+		{ timeoutMs = 120000, signal } = {}
+	) => {
+		if (!Number.isFinite(timeoutMs) || timeoutMs < 0 || timeoutMs > 600000)
+			throw new TypeError('Invalid payment timeoutMs')
+		if (!externalReference) return null
+		const popup = paymentWindows.get(externalReference)
+		const deadline = Date.now() + timeoutMs
+		const controller = new AbortController()
+		let lastResult = null
+		let timedOut = false
+		const timeoutError = Object.assign(
+			new Error('Payment status request timed out'),
+			{ code: 'PAYMENT_STATUS_TIMEOUT', externalReference }
+		)
+		const expiry = setTimeout(() => {
+			timedOut = true
+			controller.abort(timeoutError)
+		}, timeoutMs)
+		const abort = () =>
+			controller.abort(signal.reason ?? new Error('Payment wait aborted'))
+		signal?.addEventListener('abort', abort, { once: true })
+		let wake
+		const receive = event => {
+			if (
+				popup &&
+				event.source === popup &&
+				event.origin === base &&
+				event.data?.type === 'finish' &&
+				event.data.externalReference === externalReference
+			)
+				wake?.()
+		}
+		window.addEventListener('message', receive)
+		try {
+			while (true) {
+				if (signal?.aborted)
+					throw signal.reason ?? new Error('Payment wait aborted')
+				if (timedOut) {
+					if (lastResult) return lastResult
+					throw timeoutError
+				}
+				const result = await getPayment(externalReference, controller.signal)
+				lastResult = result
+				if (
+					result && ['PAID', 'PAYMENT_PENDING', 'CANCELLED', 'EXPIRED', 'REPLACED'].includes(result.state)
+				) {
+					// A pending ticket's provider page shows its payment code; keep it open.
+					if (result.state === 'PAID' && popup && !popup.closed) popup.close()
+					paymentWindows.delete(externalReference)
+					return result
+				}
+				if (Date.now() >= deadline) return result
+				await new Promise(resolve => {
+					const done = () => {
+						clearTimeout(timer)
+						controller.signal.removeEventListener('abort', done)
+						wake = undefined
+						resolve()
+					}
+					const timer = setTimeout(
+						done,
+						Math.min(2000, Math.max(0, deadline - Date.now()))
+					)
+					wake = done
+					controller.signal.addEventListener('abort', done, { once: true })
+					if (controller.signal.aborted) done()
+				})
+			}
+		} catch (error) {
+			if (timedOut && lastResult) return lastResult
+			throw error
+		} finally {
+			clearTimeout(expiry)
+			signal?.removeEventListener('abort', abort)
+			window.removeEventListener('message', receive)
+		}
+	}
+	/**
+	 * Crea el pago de Mercado Pago y abre una ventana o navega en esta pestaña.
+	 * @method checkout.pay
+	 * @param {Object} options totalDisplayedPriceInCents requerido; customer opcional; mode popup (por defecto) o redirect; returnUrl de esta tienda (por defecto la página actual).
+	 * @returns {Promise<Object>} paymentUrl y externalReference; usar waitForPayment para consultar el resultado.
+	 */
+	let paymentStarting = false
+	const pay = async ({
+		totalDisplayedPriceInCents,
+		customer,
+		mode = 'popup',
+		returnUrl = window.location.href
+	} = {}) => {
+		if (
+			!['popup', 'redirect'].includes(mode) ||
+			!Number.isSafeInteger(totalDisplayedPriceInCents) ||
+			totalDisplayedPriceInCents < 0
+		)
+			throw new TypeError('Invalid Mercado Pago checkout options')
+		if (
+			mode === 'popup' &&
+			new URL(returnUrl).origin !== window.location.origin
+		)
+			throw new TypeError('Popup returnUrl must share the client origin')
+		if (paymentStarting)
+			throw Object.assign(new Error('Payment creation already in progress'), {
+				code: 'PAYMENT_IN_PROGRESS'
+			})
+		paymentStarting = true
+		let popup = null
+		try {
+			// Reserve synchronously during the click, before any session/network await.
+			popup =
+				mode === 'popup'
+					? window.open('', '_blank', 'width=1024,height=700')
+					: null
+			if (mode === 'popup' && !popup)
+				throw Object.assign(new Error('Payment popup blocked'), {
+					code: 'POPUP_BLOCKED'
+				})
+			const payload = checked(
+				(
+					await request(
+						'mutation($input:CheckoutCompleteInput!){checkoutComplete(input:$input){paymentUrl externalReference session{token} userErrors{code field message}}}',
+						{
+							input: {
+								paymentMethod: 'mercado_pago',
+								customer,
+								totalDisplayedPriceInCents,
+								returnMode: mode,
+								returnUrl
+							}
+						}
+					)
+				).checkoutComplete
+			)
+			returnedPaymentReference = payload.externalReference
+			if (!payload.paymentUrl || !payload.externalReference)
+				throw new Error('Missing payment preference')
+			try {
+				if (persistSession)
+					window.sessionStorage.setItem(
+						paymentStorageKey,
+						payload.externalReference
+					)
+			} catch {}
+			if (popup) {
+				paymentWindows.set(payload.externalReference, popup)
+				popup.location.replace(payload.paymentUrl)
+			} else window.location.assign(payload.paymentUrl)
+			return {
+				paymentUrl: payload.paymentUrl,
+				externalReference: payload.externalReference
+			}
+		} catch (error) {
+			if (error.externalReference) {
+				returnedPaymentReference = error.externalReference
+				try { if (persistSession) window.sessionStorage.setItem(paymentStorageKey, error.externalReference) } catch {}
+			}
+			popup?.close()
+			throw error
+		} finally {
+			paymentStarting = false
+		}
 	}
 	const client = {
 		track,
@@ -576,13 +852,30 @@ export const Tiendu = (options = {}) => {
 				open('account', { mode, wishlistProductId: productId, pedido })
 		},
 		checkout: {
+			pay,
+			getPayment,
+			waitForPayment,
 			/**
 			 * Abre el checkout.
 			 * @method checkout.open
-			 * @param {Object} [options] couponCode opcional para abrir el cupón.
+			 * @param {Object} [options] couponCode y startStep opcionales.
+			 * @param {string} [options.startStep] cart, delivery, contact, summary o payment-options; cart por defecto.
+			 * @param {string} [options.couponCode] Código precargado; el cliente lo confirma en el paso de cupón.
 			 * @returns {Promise<HTMLIFrameElement>} Iframe listo.
 			 */
-			open: ({ couponCode = '' } = {}) => {
+			open: ({ couponCode = '', startStep = 'cart' } = {}) => {
+				if (
+					![
+						'cart',
+						'delivery',
+						'contact',
+						'summary',
+						'payment-options'
+					].includes(startStep)
+				)
+					return Promise.reject(
+						new TypeError(`Invalid checkout startStep: ${startStep}`)
+					)
 				const code =
 					typeof couponCode === 'string'
 						? couponCode
@@ -590,7 +883,10 @@ export const Tiendu = (options = {}) => {
 								.replace(/[^a-zA-Z0-9-]/g, '')
 								.toUpperCase()
 						: ''
-				return open('checkout', code ? { cupon: code } : {})
+				return open('checkout', {
+					...(code ? { cupon: code } : {}),
+					...(startStep !== 'cart' ? { startStep } : {})
+				})
 			}
 		},
 		wishlist: {
@@ -605,7 +901,7 @@ export const Tiendu = (options = {}) => {
 					: open('account', { mode: 'sign-in' }),
 			// Toggles run one after another, so a double click reads the state the
 			// previous toggle left instead of racing it.
-			toggle: (productId) =>
+			toggle: productId =>
 				(toggling = toggling.catch(() => {}).then(() => toggle(productId)))
 		},
 		functions: {
@@ -639,6 +935,40 @@ export const Tiendu = (options = {}) => {
 				pageView,
 				new Promise(resolve => setTimeout(resolve, 3000))
 			])
+	}
+	// Consume the link synchronously so theme-level fallbacks cannot open it twice.
+	// Only initialization handles links; importing the module has no client side effects.
+	if (
+		options.couponLinks?.enabled !== false &&
+		typeof window !== 'undefined' &&
+		window.parent === window
+	) {
+		const url = new URL(window.location.href)
+		const rawCoupon = url.searchParams.get('cupon')
+		if (rawCoupon !== null) {
+			const couponCode = rawCoupon
+				.replaceAll(' ', '-')
+				.replace(/[^a-zA-Z0-9-]/g, '')
+				.toUpperCase()
+			url.searchParams.delete('cupon')
+			window.history.replaceState(
+				window.history.state,
+				'',
+				`${url.pathname}${url.search}${url.hash}`
+			)
+			if (couponCode) {
+				const openCouponCheckout = () => {
+					void client.checkout.open({ couponCode }).catch(error => {
+						console.error('No pudimos abrir el cupón.', error)
+					})
+				}
+				if (document.readyState === 'loading')
+					document.addEventListener('DOMContentLoaded', openCouponCheckout, {
+						once: true
+					})
+				else queueMicrotask(openCouponCheckout)
+			}
+		}
 	}
 	return client
 }
